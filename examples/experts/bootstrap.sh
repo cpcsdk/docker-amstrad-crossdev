@@ -4,7 +4,7 @@
 # Bootstrap script needed to launch the environement
 
 
-DOCKER_IMAGE=benediction/cpc
+DOCKER_IMAGE=cpcsdk/crossdev
 
 LOCAL_WORKING_DIRECTORY=$(pwd)
 DOCKER_WORKING_DIRECTORY=/home/arnold/project
