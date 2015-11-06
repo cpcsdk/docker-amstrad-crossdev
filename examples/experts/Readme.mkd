@@ -1,0 +1,29 @@
+# Les experts - Coutances
+
+
+Adaptation of the project http://www.pouet.net/prod.php?which=57270 hosted here https://github.com/rgiot/Les-experts-Coutances (a different assembler was used ... and vasm does not know C comments, virtual instructions and multiple instructions per lines)
+in order to demonstrate the ability of the Docker image
+
+
+# How to use the system
+
+
+Launch the bootstrap script in order to go into the crossdev environement
+```bash
+$ ./bootstrap.sh
+arnold at experts in ~/project
+$
+```
+
+The project uses a specific makefile
+```bash
+arnold at experts in ~/project
+$ make ALL
+```
+
+That's all, the DSK has been produced and can be launched from the host
+
+# Limitations
+
+This demo has been coded with another assembler. I have probably wrongly converted it, the 2 last music does not work.
+
