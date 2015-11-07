@@ -16,18 +16,47 @@ ENV EXOMIZER_URL  http://hem.bredband.net/magli143/exo/exomizer209.zip
 ENV LIBDSK_URL  http://www.seasip.info/Unix/LibDsk/libdsk-1.3.8.tar.gz
 ENV INSTALLATION_BIN  /usr/local/bin
 
+ENV GENERAL_DEPENDENCIES \
+		wget \
+		build-essential \
+		make \
+		python \
+		cmake \
+		unzip \
+		curl \
+		cmake 
+
+ENV EDITOR_DEPENDENCIES\
+	vim-gnome \
+	vim-ultisnips \
+	vim-syntastic \
+	vim-youcompleteme \
+	powerline \
+	vim-fugitive \
+	vim-ctrlp \
+	exuberant-ctags \
+	libcanberra-gtk-module 
+
+ENV CPCTELERA_DEPENDENCIES \
+	libboost-dev \
+	libfreeimage-dev \
+	bison \
+	flex
+	
+
+ENV GIT_DEPENDENCIES \
+	git \
+	meld
+
 RUN mkdir /src
 
 # install the set of dependencies
 RUN apt-get update && \
 	apt-get install  -qy \
-		wget \
-		build-essential \
-		make \
-		python \
-		git \
-		cmake \
-		unzip
+		${GENERAL_DEPENDENCIES} \
+		${EDITOR_DEPENDENCIES} \
+		${CPCTELERA_DEPENDENCIES} \
+		${GIT_DEPENDENCIES}
 
 
 
@@ -100,18 +129,15 @@ RUN cmake .  && \
 	cp iDSK ${INSTALLATION_BIN}
 
 
-# git stuff
-RUN apt-get install -y meld
-RUN git config --global merge.tool meld
-
 # add cpctelera
 WORKDIR /src
-RUN apt-get install -y libboost-dev libfreeimage-dev bison flex
 RUN wget https://github.com/lronaldo/cpctelera/archive/v1.2.3.zip -O /tmp/cpctelera.zip && \
 	unzip /tmp/cpctelera.zip && \
 	rm /tmp/cpctelera.zip && \
 	cd cpctelera-1.2.3 && \
 	./setup.sh
+
+
 
 
 # Create the user of interest
@@ -121,9 +147,26 @@ RUN useradd \
 	--shell /bin/bash \
 	arnold
 USER arnold
-ADD .bashrc /home/arnold/
 
+# Install vim plugins
+RUN mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+	curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim && \
+	cd ~/.vim/bundle && \
+	git clone --depth=1 https://github.com/majutsushi/tagbar && \
+	git clone --depth=1 https://github.com/xolox/vim-misc.git && \
+	git clone --depth=1 https://github.com/xolox/vim-easytags.git && \
+	git clone --depth=1 https://github.com/altercation/vim-colors-solarized.git && \
+	git clone --depth=1 https://github.com/cpcsdk/vim-z80-democoding.git
+
+
+ADD bashrc /home/arnold/.bashrc
+ADD vimrc /home/arnold/.vimrc
+ADD ctags /home/arnold/.ctags
+
+RUN git config --global merge.tool meld
 
 # ensure the shell will properly work
 ENV TERM xterm-256color
+
+# ensure X tools can be used
 
