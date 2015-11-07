@@ -16,5 +16,8 @@ $DOCKER run \
 	-h $DOCKER_HOSTNAME \
 	-v $LOCAL_WORKING_DIRECTORY:$DOCKER_WORKING_DIRECTORY \
 	-w $DOCKER_WORKING_DIRECTORY \
+	--rm=true \
 	-i \
+       	-e DISPLAY=$DISPLAY \
+       	-v /tmp/.X11-unix:/tmp/.X11-unix \
 	-t $DOCKER_IMAGE
