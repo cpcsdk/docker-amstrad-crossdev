@@ -128,6 +128,8 @@ RUN make -f Makefile-unix.eng ; \
 	cp hideur ${INSTALLATION_BIN}
 
 # iDSK
+# XXX iDSK is already installed with cpctelera
+# verify whihc one we need to keep
 WORKDIR /src/cpctools/iDSK
 RUN cmake .  && \
 	make -j2 iDSK && \
@@ -136,10 +138,9 @@ RUN cmake .  && \
 
 # add cpctelera
 WORKDIR /src
-RUN wget https://github.com/lronaldo/cpctelera/archive/v1.2.3.zip -O /tmp/cpctelera.zip && \
-	unzip /tmp/cpctelera.zip && \
-	rm /tmp/cpctelera.zip && \
-	cd cpctelera-1.2.3 && \
+RUN wget https://github.com/lronaldo/cpctelera/archive/v1.3.tar.gz -O -| \
+	tar -xzf - && \
+	cd cpctelera-1.3 && \
 	./setup.sh
 
 
