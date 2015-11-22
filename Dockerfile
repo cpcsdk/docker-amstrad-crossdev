@@ -24,7 +24,8 @@ ENV GENERAL_DEPENDENCIES \
 		cmake \
 		unzip \
 		curl \
-		cmake 
+		cmake \
+		wine-development
 
 ENV EDITOR_DEPENDENCIES\
 	vim-gnome \
@@ -51,12 +52,16 @@ ENV GIT_DEPENDENCIES \
 RUN mkdir /src
 
 # install the set of dependencies
-RUN apt-get update && \
+RUN dpkg --add-architecture i386 && \
+	apt-get update && \
+	apt-get update && \
 	apt-get install  -qy \
 		${GENERAL_DEPENDENCIES} \
 		${EDITOR_DEPENDENCIES} \
 		${CPCTELERA_DEPENDENCIES} \
-		${GIT_DEPENDENCIES}
+		${GIT_DEPENDENCIES} && \
+	apt-get purge -y software-properties-common && \
+	apt-get autoclean -y
 
 
 
@@ -123,6 +128,8 @@ RUN make -f Makefile-unix.eng ; \
 	cp hideur ${INSTALLATION_BIN}
 
 # iDSK
+# XXX iDSK is already installed with cpctelera
+# verify whihc one we need to keep
 WORKDIR /src/cpctools/iDSK
 RUN cmake .  && \
 	make -j2 iDSK && \
@@ -131,10 +138,9 @@ RUN cmake .  && \
 
 # add cpctelera
 WORKDIR /src
-RUN wget https://github.com/lronaldo/cpctelera/archive/v1.2.3.zip -O /tmp/cpctelera.zip && \
-	unzip /tmp/cpctelera.zip && \
-	rm /tmp/cpctelera.zip && \
-	cd cpctelera-1.2.3 && \
+RUN wget https://github.com/lronaldo/cpctelera/archive/v1.3.tar.gz -O -| \
+	tar -xzf - && \
+	cd cpctelera-1.3 && \
 	./setup.sh
 
 
