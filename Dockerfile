@@ -24,7 +24,8 @@ ENV GENERAL_DEPENDENCIES \
 		cmake \
 		unzip \
 		curl \
-		cmake 
+		cmake \
+		wine-development
 
 ENV EDITOR_DEPENDENCIES\
 	vim-gnome \
@@ -51,12 +52,16 @@ ENV GIT_DEPENDENCIES \
 RUN mkdir /src
 
 # install the set of dependencies
-RUN apt-get update && \
+RUN dpkg --add-architecture i386 && \
+	apt-get update && \
+	apt-get update && \
 	apt-get install  -qy \
 		${GENERAL_DEPENDENCIES} \
 		${EDITOR_DEPENDENCIES} \
 		${CPCTELERA_DEPENDENCIES} \
-		${GIT_DEPENDENCIES}
+		${GIT_DEPENDENCIES} && \
+	apt-get purge -y software-properties-common && \
+	apt-get autoclean -y
 
 
 
