@@ -15,6 +15,10 @@ arnold at experts in ~/project
 $
 ```
 
+With windows, the script to launch is
+```bash
+$ ./bootstrap-windows.sh
+```
 The project uses a specific makefile
 ```bash
 arnold at experts in ~/project
