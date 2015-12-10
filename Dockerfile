@@ -144,7 +144,10 @@ RUN wget https://github.com/lronaldo/cpctelera/archive/v1.3.tar.gz -O -| \
 	./setup.sh
 
 
-
+# createSnapshot
+WORKDIR /src/cpctools/cpctools/tools/AFT2
+RUN make aft2 && \
+	cp aft2 ${INSTALLATION_BIN}
 
 # Create the user of interest
 RUN useradd \
@@ -152,6 +155,7 @@ RUN useradd \
 	--create-home \
 	--shell /bin/bash \
 	arnold
+RUN addgroup arnold dialout
 USER arnold
 
 # Install vim plugins
