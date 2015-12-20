@@ -15,6 +15,7 @@ ENV VLINK_URL  http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
 ENV EXOMIZER_URL  http://hem.bredband.net/magli143/exo/exomizer209.zip
 ENV LIBDSK_URL  http://www.seasip.info/Unix/LibDsk/libdsk-1.3.8.tar.gz
 ENV INSTALLATION_BIN  /usr/local/bin
+ENV HFE_URL svn://svn.code.sf.net/p/hxcfloppyemu/code/
 
 ENV GENERAL_DEPENDENCIES \
 		wget \
@@ -25,7 +26,8 @@ ENV GENERAL_DEPENDENCIES \
 		unzip \
 		curl \
 		cmake \
-		wine-development
+		wine-development \
+		ack-grep
 
 ENV EDITOR_DEPENDENCIES\
 	vim-gnome \
@@ -45,10 +47,11 @@ ENV CPCTELERA_DEPENDENCIES \
 	flex
 	
 
-ENV GIT_DEPENDENCIES \
+ENV GIT_SVN_DEPENDENCIES \
 	git \
 	gitg \
-	meld
+	meld \
+	subversion
 
 RUN mkdir /src
 
@@ -60,7 +63,7 @@ RUN dpkg --add-architecture i386 && \
 		${GENERAL_DEPENDENCIES} \
 		${EDITOR_DEPENDENCIES} \
 		${CPCTELERA_DEPENDENCIES} \
-		${GIT_DEPENDENCIES} && \
+		${GIT_SVN_DEPENDENCIES} && \
 	apt-get purge -y software-properties-common && \
 	apt-get autoclean -y
 
@@ -136,6 +139,12 @@ RUN cmake .  && \
 	make -j2 iDSK && \
 	cp iDSK ${INSTALLATION_BIN}
 
+# createSnapshot
+WORKDIR /src/cpctools/cpctools/tools/AFT2
+RUN make aft2 && \
+	cp aft2 ${INSTALLATION_BIN}
+
+
 
 # add cpctelera
 WORKDIR /src
@@ -144,11 +153,18 @@ RUN wget https://github.com/lronaldo/cpctelera/archive/v1.3.tar.gz -O -| \
 	cd cpctelera-1.3 && \
 	./setup.sh
 
+# add hfe creation
+# Install additional tools (integrate with the original cpcsdk)
+RUN cd /tmp && \
+	svn checkout svn://svn.code.sf.net/p/hxcfloppyemu/code/ hxcfloppyemu-code && \
+	cd hxcfloppyemu-code/HxCFloppyEmulator/build && \
+	make ;  \
+	cp hxcfe /usr/bin && \
+	cp *.so /usr/lib && \
+	rm -rf /tmp/hxcfloppyemu-code
 
-# createSnapshot
-WORKDIR /src/cpctools/cpctools/tools/AFT2
-RUN make aft2 && \
-	cp aft2 ${INSTALLATION_BIN}
+# Remove all sources to reduce image size
+RUN rm -rf /src
 
 # Create the user of interest
 RUN useradd \
