@@ -47,6 +47,7 @@ ENV CPCTELERA_DEPENDENCIES \
 
 ENV GIT_DEPENDENCIES \
 	git \
+	gitg \
 	meld
 
 RUN mkdir /src
