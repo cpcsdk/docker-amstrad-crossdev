@@ -13,7 +13,7 @@ MAINTAINER Romain Giot <giot.romain@gmail.com>
 ENV VASM_URL  http://sun.hasenbraten.de/vasm/release/vasm.tar.gz
 ENV VLINK_URL  http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
 ENV EXOMIZER_URL  http://hem.bredband.net/magli143/exo/exomizer209.zip
-ENV LIBDSK_URL  http://www.seasip.info/Unix/LibDsk/libdsk-1.3.8.tar.gz
+ENV LIBDSK_URL  http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
 ENV INSTALLATION_BIN  /usr/local/bin
 ENV HFE_URL svn://svn.code.sf.net/p/hxcfloppyemu/code/
 
@@ -74,7 +74,7 @@ RUN dpkg --add-architecture i386 && \
 WORKDIR /src
 RUN wget ${LIBDSK_URL} -O- | \
 	tar -xzf - && \
-	cd libdsk-1.3.8 && \
+	cd libdsk-* && \
 	./configure && \
 	make -j2 && \
 	make install
@@ -139,11 +139,19 @@ RUN cmake .  && \
 	make -j2 iDSK && \
 	cp iDSK ${INSTALLATION_BIN}
 
-# createSnapshot
+# aft
 WORKDIR /src/cpctools/cpctools/tools/AFT2
 RUN make aft2 && \
 	cp aft2 ${INSTALLATION_BIN}
 
+# damsConverter
+WORKDIR /src/cpctools/cpctools/tools/damsConverter
+RUN make damsConverter && \
+	cp damsConverter ${INSTALLATION_BIN}
+
+# dependencies
+WORKDIR /src/cpctools/cpctools/lib
+RUN cp libcpc.so ${INSTALLATION_BIN}/../lib
 
 
 # add cpctelera
