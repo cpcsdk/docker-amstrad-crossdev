@@ -80,24 +80,6 @@ RUN wget ${LIBDSK_URL} -O- | \
 	make install
 
 
-# vasm installation
-WORKDIR /src
-RUN wget ${VASM_URL} -O- | \
-	tar -xzf - && \
-	cd vasm && \
-	make -j2 CPU=z80 SYNTAX=oldstyle && \
-	cp vasmz80_oldstyle vobjdump ${INSTALLATION_BIN}
-
-
-# vlink installation
-WORKDIR /src
-RUN wget ${VLINK_URL} -O- | \
-	tar -xzf - && \
-	cd vlink && \
-	make -j2 && \
-	cp vlink ${INSTALLATION_BIN}
-	
-
 
 # exomizer installation
 WORKDIR /src
@@ -176,6 +158,25 @@ WORKDIR /src
 RUN git clone https://github.com/cpcsdk/pycpcdemotools.git && \
 	cd pycpcdemotools && \
 	python setup.py install
+
+
+# vasm installation XXX sometimes need to update vasm when bugfixes are ready
+WORKDIR /src
+RUN wget ${VASM_URL} -O- | \
+	tar -xzf - && \
+	cd vasm && \
+	make -j2 CPU=z80 SYNTAX=oldstyle && \
+	cp vasmz80_oldstyle vobjdump ${INSTALLATION_BIN}
+
+
+# vlink installation
+WORKDIR /src
+RUN wget ${VLINK_URL} -O- | \
+	tar -xzf - && \
+	cd vlink && \
+	make -j2 && \
+	cp vlink ${INSTALLATION_BIN}
+	
 
 # Remove all sources to reduce image size
 RUN rm -rf /src
