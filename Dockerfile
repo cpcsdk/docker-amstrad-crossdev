@@ -171,6 +171,12 @@ RUN cd /tmp && \
 	cp *.so /usr/lib && \
 	rm -rf /tmp/hxcfloppyemu-code
 
+# Install pycpc
+WORKDIR /src
+RUN git clone https://github.com/cpcsdk/pycpcdemotools.git && \
+	cd pycpcdemotools && \
+	python setup.py install
+
 # Remove all sources to reduce image size
 RUN rm -rf /src
 
