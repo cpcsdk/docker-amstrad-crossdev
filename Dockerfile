@@ -6,6 +6,8 @@
 # evolve without changing their URL (vasm for example)
 
 
+# Force Full rebuild 18/01/2016
+
 FROM ubuntu:15.10
 MAINTAINER Romain Giot <giot.romain@gmail.com>
 
