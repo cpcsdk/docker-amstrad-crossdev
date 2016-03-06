@@ -18,35 +18,40 @@ ENV EXOMIZER_URL  http://hem.bredband.net/magli143/exo/exomizer209.zip
 ENV LIBDSK_URL  http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
 ENV INSTALLATION_BIN  /usr/local/bin
 ENV HFE_URL svn://svn.code.sf.net/p/hxcfloppyemu/code/
+ENV CPCTELERA_URL=https://github.com/lronaldo/cpctelera/archive/v1.3.tar.gz 
+
+ENV TERM xterm-256color
+
+ENV LIBDSK_HEADERS_DIR /usr/local/include/
 
 ENV GENERAL_DEPENDENCIES \
-		wget \
+		ack-grep \
 		build-essential \
+		cmake \
+		cmake \
+		curl \
 		make \
 		python \
-		cmake \
 		unzip \
-		curl \
-		cmake \
-		wine-development \
-		ack-grep
+		wget \
+		wine 
 
 ENV EDITOR_DEPENDENCIES\
-	vim-gnome \
-	vim-ultisnips \
-	vim-syntastic \
-	vim-youcompleteme \
-	powerline \
-	vim-fugitive \
-	vim-ctrlp \
 	exuberant-ctags \
-	libcanberra-gtk-module 
+	libcanberra-gtk-module  \
+	powerline \
+	vim-ctrlp \
+	vim-fugitive \
+	vim-gnome \
+	vim-syntastic \
+	vim-ultisnips \
+	vim-youcompleteme 
 
 ENV CPCTELERA_DEPENDENCIES \
-	libboost-dev \
-	libfreeimage-dev \
 	bison \
-	flex
+	flex \
+	libboost-dev \
+	libfreeimage-dev 
 	
 
 ENV GIT_SVN_DEPENDENCIES \
@@ -55,19 +60,24 @@ ENV GIT_SVN_DEPENDENCIES \
 	meld \
 	subversion
 
-RUN mkdir /src
+RUN mkdir /src /cpctelera
 
 # install the set of dependencies
-RUN dpkg --add-architecture i386 && \
+RUN apt-get update && \
+	apt-get install -qy software-properties-common && \
+	dpkg --add-architecture i386 && \
+	add-apt-repository ppa:ubuntu-wine/ppa && \
 	apt-get update && \
-	apt-get update && \
+	apt-get upgrade -qy && \
+	apt-get dist-upgrade -qy && \
 	apt-get install  -qy \
 		${GENERAL_DEPENDENCIES} \
 		${EDITOR_DEPENDENCIES} \
 		${CPCTELERA_DEPENDENCIES} \
 		${GIT_SVN_DEPENDENCIES} && \
 	apt-get purge -y software-properties-common && \
-	apt-get autoclean -y
+	apt-get autoclean -y &&\
+	rm -rf /var/lib/apt/lists/*
 
 
 
@@ -79,7 +89,8 @@ RUN wget ${LIBDSK_URL} -O- | \
 	cd libdsk-* && \
 	./configure && \
 	make -j2 && \
-	make install
+	make install && \
+	rm -rf ../libdsk-*
 
 
 
@@ -91,75 +102,62 @@ RUN wget ${EXOMIZER_URL} -O /tmp/exo.zip && \
 	cd exomizer/src && \
 	sed -i -e 's/-mtune=i686//' Makefile && \
 	make -j2 && \
-	cp exoraw exomizer ${INSTALLATION_BIN}
+	cp exoraw exomizer ${INSTALLATION_BIN} && \
+	rm -rf ../../exomizer
 
 
 
 
 # CPCSDK stuff
 WORKDIR /src
-env LIBDSK_HEADERS_DIR /usr/local/include/
 RUN git clone --depth=1 https://github.com/cpcsdk/cpctools.git && \
 	cd cpctools/cpctools && \
 	sed -e '1i#include <cstdlib>' -i $LIBDSK_HEADERS_DIR/libdsk.h && \
-	cmake -DLIBDSK_HEADERS_DIR=${LIBDSK_HEADERS_DIR}  .
-
-
-# createSnapshot
-WORKDIR /src/cpctools/cpctools
-RUN make createSnapshot && \
-	cp tools/createSnapshot ${INSTALLATION_BIN}
-
-# hideur
-WORKDIR /src/cpctools/hideur_maikeur
-RUN make -f Makefile-unix.eng ; \
-	cp hideur ${INSTALLATION_BIN}
-
-# iDSK
-# XXX iDSK is already installed with cpctelera
-# verify whihc one we need to keep
-WORKDIR /src/cpctools/iDSK
-RUN cmake .  && \
+	cmake -DLIBDSK_HEADERS_DIR=${LIBDSK_HEADERS_DIR}  . && \
+	make createSnapshot && \
+	cp tools/createSnapshot ${INSTALLATION_BIN} && \
+	cd ../hideur_maikeur && \
+	make -f Makefile-unix.eng ; \
+	cp hideur ${INSTALLATION_BIN} && \
+	cd ../iDSK && \
+	cmake .  && \
 	make -j2 iDSK && \
-	cp iDSK ${INSTALLATION_BIN}
-
-# aft
-WORKDIR /src/cpctools/cpctools/tools/AFT2
-RUN make aft2 && \
-	cp aft2 ${INSTALLATION_BIN}
-
-# damsConverter
-WORKDIR /src/cpctools/cpctools/tools/damsConverter
-RUN make damsConverter && \
-	cp damsConverter ${INSTALLATION_BIN}
-
-# dependencies
-WORKDIR /src/cpctools/cpctools/lib
-RUN cp libcpc.so ${INSTALLATION_BIN}/../lib
+	cp iDSK ${INSTALLATION_BIN} && \
+	cd ../cpctools/tools/AFT2 && \
+	make aft2 && \
+	cp aft2 ${INSTALLATION_BIN} && \
+	cd ../damsConverter && \
+	make damsConverter && \
+	cp damsConverter ${INSTALLATION_BIN} && \
+	cd ../../lib && \
+	cp libcpc.so ${INSTALLATION_BIN}/../lib && \
+	cd ../../.. && \
+	rm -rf cpctools
 
 
 # add cpctelera
-WORKDIR /src
-RUN wget https://github.com/lronaldo/cpctelera/archive/v1.3.tar.gz -O -| \
+WORKDIR /cpctelera
+RUN wget ${CPCTELERA_URL} -O -| \
 	tar -xzf - && \
 	cd cpctelera-1.3 && \
 	./setup.sh
 
 # add hfe creation
 # Install additional tools (integrate with the original cpcsdk)
-RUN cd /tmp && \
-	svn checkout svn://svn.code.sf.net/p/hxcfloppyemu/code/ hxcfloppyemu-code && \
+WORKDIR /src
+RUN	svn checkout svn://svn.code.sf.net/p/hxcfloppyemu/code/ hxcfloppyemu-code && \
 	cd hxcfloppyemu-code/HxCFloppyEmulator/build && \
 	make ;  \
 	cp hxcfe /usr/bin && \
 	cp *.so /usr/lib && \
-	rm -rf /tmp/hxcfloppyemu-code
+	rm -rf ../../../hxcfloppyemu-code
 
 # Install pycpc
 WORKDIR /src
 RUN git clone https://github.com/cpcsdk/pycpcdemotools.git && \
 	cd pycpcdemotools && \
-	python setup.py install
+	python setup.py install && \
+	rm -rf ../pycpcdemotools
 
 
 # vasm installation XXX sometimes need to update vasm when bugfixes are ready
@@ -168,7 +166,8 @@ RUN wget ${VASM_URL} -O- | \
 	tar -xzf - && \
 	cd vasm && \
 	make -j2 CPU=z80 SYNTAX=oldstyle && \
-	cp vasmz80_oldstyle vobjdump ${INSTALLATION_BIN}
+	cp vasmz80_oldstyle vobjdump ${INSTALLATION_BIN} && \
+	rm -rf ../vasm
 
 
 # vlink installation
@@ -177,7 +176,8 @@ RUN wget ${VLINK_URL} -O- | \
 	tar -xzf - && \
 	cd vlink && \
 	make -j2 && \
-	cp vlink ${INSTALLATION_BIN}
+	cp vlink ${INSTALLATION_BIN} && \
+	rm -rf ../vlink
 	
 
 # Remove all sources to reduce image size
@@ -191,6 +191,8 @@ RUN useradd \
 	arnold
 RUN addgroup arnold dialout
 USER arnold
+
+RUN winecfg
 
 # Install vim plugins
 RUN mkdir -p ~/.vim/autoload ~/.vim/bundle && \
@@ -210,7 +212,6 @@ ADD ctags /home/arnold/.ctags
 RUN git config --global merge.tool meld
 
 # ensure the shell will properly work
-ENV TERM xterm-256color
 
 # ensure X tools can be used
 
