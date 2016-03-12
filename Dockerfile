@@ -10,7 +10,7 @@ FROM ubuntu:15.10
 MAINTAINER Romain Giot <giot.romain@gmail.com>
 
 # Ensemble of URL needed to install stuff
-ENV VASM_URL  http://sun.hasenbraten.de/vasm/release/vasm.tar.gz
+ENV VASM_URL  http://sun.hasenbraten.de/vasm/daily/vasm.tar.gz
 ENV VLINK_URL  http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
 ENV EXOMIZER_URL  http://hem.bredband.net/magli143/exo/exomizer209.zip
 ENV LIBDSK_URL  http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
