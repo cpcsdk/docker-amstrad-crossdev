@@ -6,9 +6,9 @@
 # evolve without changing their URL (vasm for example)
 
 
-# Force Full rebuild 03/04/2016
+# Force Full rebuild 30/07/2016
 
-FROM ubuntu:15.10
+FROM ubuntu:16.04
 MAINTAINER Romain Giot <giot.romain@gmail.com>
 
 # Ensemble of URL needed to install stuff
@@ -18,7 +18,7 @@ ENV EXOMIZER_URL  http://hem.bredband.net/magli143/exo/exomizer209.zip
 ENV LIBDSK_URL  http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
 ENV INSTALLATION_BIN  /usr/local/bin
 ENV HFE_URL svn://svn.code.sf.net/p/hxcfloppyemu/code/
-ENV CPCTELERA_URL=https://github.com/lronaldo/cpctelera/archive/v1.3.tar.gz 
+ENV CPCTELERA_URL=https://github.com/lronaldo/cpctelera/archive/v1.4.tar.gz 
 
 ENV TERM xterm-256color
 
@@ -45,7 +45,8 @@ ENV EDITOR_DEPENDENCIES\
 	vim-gnome \
 	vim-syntastic \
 	vim-ultisnips \
-	vim-youcompleteme 
+	vim-youcompleteme \
+  vim-fugitive
 
 ENV CPCTELERA_DEPENDENCIES \
 	bison \
@@ -139,7 +140,7 @@ RUN git clone --depth=1 https://github.com/cpcsdk/cpctools.git && \
 WORKDIR /cpctelera
 RUN wget ${CPCTELERA_URL} -O -| \
 	tar -xzf - && \
-	cd cpctelera-1.3 && \
+	cd cpctelera-* && \
 	./setup.sh
 
 # add hfe creation
