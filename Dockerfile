@@ -184,6 +184,13 @@ RUN wget ${VLINK_URL} -O- | \
 # Remove all sources to reduce image size
 RUN rm -rf /src
 
+
+
+# Add winape
+RUN mkdir /winape && cd /winape && wget http://winape.net/download/WinAPE20B2.zip && unzip WinAPE20B2.zip && ls -R
+
+
+
 # Create the user of interest
 RUN useradd \
 	--home-dir /home/arnold \
@@ -194,6 +201,7 @@ RUN addgroup arnold dialout
 USER arnold
 
 RUN winecfg
+
 
 # Install vim plugins
 RUN mkdir -p ~/.vim/autoload ~/.vim/bundle && \
