@@ -6,13 +6,13 @@
 # evolve without changing their URL (vasm for example)
 
 
-# Force Full rebuild 30/07/2016
+# Force Full rebuild 01/09/2016
 
 FROM ubuntu:16.04
 MAINTAINER Romain Giot <giot.romain@gmail.com>
 
 # Ensemble of URL needed to install stuff
-ENV VASM_URL  http://sun.hasenbraten.de/vasm/daily/vasm.tar.gz
+ENV VASM_URL  http://server.owl.de/~frank/tags/vasm1_7g.tar.gz
 ENV VLINK_URL  http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
 ENV EXOMIZER_URL  http://hem.bredband.net/magli143/exo/exomizer209.zip
 ENV LIBDSK_URL  http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
@@ -26,12 +26,15 @@ ENV LIBDSK_HEADERS_DIR /usr/local/include/
 
 ENV GENERAL_DEPENDENCIES \
 		ack-grep \
+		bc \
 		build-essential \
 		cmake \
 		cmake \
+		cloc \
 		curl \
 		make \
 		python \
+		python-matplotlib \
 		unzip \
 		wget \
 		wine 
