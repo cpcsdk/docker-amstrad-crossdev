@@ -22,26 +22,26 @@ PLAMA_TEXTE=0x1E8B
 .select_music
  call &BB06 ;- KM WAIT CHAR
  cp '1' 
-	 jr z, first_music
+     jr z, first_music
  cp '2' 
-	 jr z, second_music
+     jr z, second_music
  cp '3' 
-	 jr z, third_music
+     jr z, third_music
  jr .select_music
 
 second_music ld a, 2 
-	 jr next
+     jr next
 third_music ld a, 3 
-	jr next
+    jr next
 first_music ld a, 1
 
 next
  di
  ld i, a
  ld bc, 0xbc01 
-	 out (c), c
+     out (c), c
  inc b : dec c 
-	 out (c), c
+     out (c), c
 
  ld sp, 0x100
  ld hl, data_b
@@ -118,10 +118,10 @@ uncrunch
  jp 0x100
 
 mcklainstr
- abyte -'A'+1 'MCKLAIN'
+ abyte -'A'+1, 'MCKLAIN'
 mcklainstr_end
 countzerostr
- abyte -'A'+1 'COUNTZERO'
+ abyte -'A'+1, 'COUNTZERO'
 countzerostr_end
 
  include src/deexo.asm

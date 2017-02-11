@@ -6,193 +6,18 @@
 # evolve without changing their URL (vasm for example)
 
 
-# Force Full rebuild 01/09/2016
-
 FROM ubuntu:16.04
 MAINTAINER Romain Giot <giot.romain@gmail.com>
 
-# Ensemble of URL needed to install stuff
-ENV VASM_URL  http://server.owl.de/~frank/tags/vasm1_7g.tar.gz
-ENV VLINK_URL  http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
-ENV EXOMIZER_URL  http://hem.bredband.net/magli143/exo/exomizer209.zip
-ENV LIBDSK_URL  http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
-ENV INSTALLATION_BIN  /usr/local/bin
-ENV HFE_URL svn://svn.code.sf.net/p/hxcfloppyemu/code/
-ENV CPCTELERA_URL=https://github.com/lronaldo/cpctelera/archive/v1.4.tar.gz 
-
 ENV TERM xterm-256color
 
-ENV LIBDSK_HEADERS_DIR /usr/local/include/
 
-ENV GENERAL_DEPENDENCIES \
-		ack-grep \
-		bc \
-		build-essential \
-		cmake \
-		cmake \
-		cloc \
-		curl \
-		make \
-		python \
-		python-matplotlib \
-		unzip \
-		wget \
-		wine 
+RUN apt-get update && apt-get install make
 
-ENV EDITOR_DEPENDENCIES\
-	exuberant-ctags \
-	libcanberra-gtk-module  \
-	powerline \
-	vim-ctrlp \
-	vim-fugitive \
-	vim-gnome \
-	vim-syntastic \
-	vim-ultisnips \
-	vim-youcompleteme \
-  vim-fugitive
-
-ENV CPCTELERA_DEPENDENCIES \
-	bison \
-	flex \
-	libboost-dev \
-	libfreeimage-dev 
-	
-
-ENV GIT_SVN_DEPENDENCIES \
-	git \
-	gitg \
-	meld \
-	subversion
-
-RUN mkdir /src /cpctelera
-
-# install the set of dependencies
-RUN apt-get update && \
-	apt-get install -qy software-properties-common && \
-	dpkg --add-architecture i386 && \
-	add-apt-repository ppa:ubuntu-wine/ppa && \
-	apt-get update && \
-	apt-get upgrade -qy && \
-	apt-get dist-upgrade -qy && \
-	apt-get install  -qy \
-		${GENERAL_DEPENDENCIES} \
-		${EDITOR_DEPENDENCIES} \
-		${CPCTELERA_DEPENDENCIES} \
-		${GIT_SVN_DEPENDENCIES} && \
-	apt-get purge -y software-properties-common && \
-	apt-get autoclean -y &&\
-	rm -rf /var/lib/apt/lists/*
-
-
-
-
-# libdsk
-WORKDIR /src
-RUN wget ${LIBDSK_URL} -O- | \
-	tar -xzf - && \
-	cd libdsk-* && \
-	./configure && \
-	make -j2 && \
-	make install && \
-	rm -rf ../libdsk-*
-
-
-
-# exomizer installation
-WORKDIR /src
-RUN wget ${EXOMIZER_URL} -O /tmp/exo.zip && \
-	unzip /tmp/exo.zip -d exomizer && \
-	rm /tmp/exo.zip && \
-	cd exomizer/src && \
-	sed -i -e 's/-mtune=i686//' Makefile && \
-	make -j2 && \
-	cp exoraw exomizer ${INSTALLATION_BIN} && \
-	rm -rf ../../exomizer
-
-
-
-
-# CPCSDK stuff
-WORKDIR /src
-RUN git clone --depth=1 https://github.com/cpcsdk/cpctools.git && \
-	cd cpctools/cpctools && \
-	sed -e '1i#include <cstdlib>' -i $LIBDSK_HEADERS_DIR/libdsk.h && \
-	cmake -DLIBDSK_HEADERS_DIR=${LIBDSK_HEADERS_DIR}  . && \
-	make createSnapshot && \
-	cp tools/createSnapshot ${INSTALLATION_BIN} && \
-	cd ../hideur_maikeur && \
-	make -f Makefile-unix.eng ; \
-	cp hideur ${INSTALLATION_BIN} && \
-	cd ../iDSK && \
-	cmake .  && \
-	make -j2 iDSK && \
-	cp iDSK ${INSTALLATION_BIN} && \
-	cd ../cpctools/tools/AFT2 && \
-	make aft2 && \
-	cp aft2 ${INSTALLATION_BIN} && \
-	cd ../damsConverter && \
-	make damsConverter && \
-	cp damsConverter ${INSTALLATION_BIN} && \
-	cd ../../lib && \
-	cp libcpc.so ${INSTALLATION_BIN}/../lib && \
-	cd ../../.. && \
-	rm -rf cpctools
-
-
-# add cpctelera
-WORKDIR /cpctelera
-RUN wget ${CPCTELERA_URL} -O -| \
-	tar -xzf - && \
-	cd cpctelera-* && \
-	./setup.sh
-
-# add hfe creation
-# Install additional tools (integrate with the original cpcsdk)
-WORKDIR /src
-RUN	svn checkout svn://svn.code.sf.net/p/hxcfloppyemu/code/ hxcfloppyemu-code && \
-	cd hxcfloppyemu-code/HxCFloppyEmulator/build && \
-	make ;  \
-	cp hxcfe /usr/bin && \
-	cp *.so /usr/lib && \
-	rm -rf ../../../hxcfloppyemu-code
-
-# Install pycpc
-WORKDIR /src
-RUN git clone https://github.com/cpcsdk/pycpcdemotools.git && \
-	cd pycpcdemotools && \
-	python setup.py install && \
-	rm -rf ../pycpcdemotools
-
-
-# vasm installation XXX sometimes need to update vasm when bugfixes are ready
-WORKDIR /src
-RUN wget ${VASM_URL} -O- | \
-	tar -xzf - && \
-	cd vasm && \
-	make -j2 CPU=z80 SYNTAX=oldstyle && \
-	cp vasmz80_oldstyle vobjdump ${INSTALLATION_BIN} && \
-	rm -rf ../vasm
-
-
-# vlink installation
-WORKDIR /src
-RUN wget ${VLINK_URL} -O- | \
-	tar -xzf - && \
-	cd vlink && \
-	make -j2 && \
-	cp vlink ${INSTALLATION_BIN} && \
-	rm -rf ../vlink
-	
-
-# Remove all sources to reduce image size
-RUN rm -rf /src
-
-
-
-# Add winape
-RUN mkdir /winape && cd /winape && wget http://winape.net/download/WinAPE20B2.zip && unzip WinAPE20B2.zip && ls -R
-
-
+RUN mkdir /cpcsdk
+WORKDIR /cpcsdk
+ADD data/Makefile /cpcsdk/Makefile
+RUN make install_all
 
 # Create the user of interest
 RUN useradd \
@@ -217,9 +42,9 @@ RUN mkdir -p ~/.vim/autoload ~/.vim/bundle && \
 	git clone --depth=1 https://github.com/cpcsdk/vim-z80-democoding.git
 
 
-ADD bashrc /home/arnold/.bashrc
-ADD vimrc /home/arnold/.vimrc
-ADD ctags /home/arnold/.ctags
+ADD data/bashrc /home/arnold/.bashrc
+ADD data/vimrc /home/arnold/.vimrc
+ADD data/ctags /home/arnold/.ctags
 
 RUN git config --global merge.tool meld
 
