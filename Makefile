@@ -12,10 +12,7 @@ build:
 # Create the tag of the current version and push it to the docker hub
 tag_and_push:
 	docker tag  \
-		$$(  \
-			docker images | \
-			grep $(IMAGE) | \
-			cut -f3) \
+		$$(  docker images | grep cpcsdk/crossdev | grep latest | sed -e 's/.*latest\W*//'  -e 's/\(\w*\).*/\1/') \
 		$(IMAGE):$(VERSION)
 	docker push $(IMAGE):$(VERSION)
 
@@ -28,5 +25,6 @@ test:
 
 # Install on the host machine the scripts
 install_wrappers:
-	for file in wrappers ; do \
-		sudo cp $$file $(INSTALL_ROOT)/bin
+	for file in wrappers/* ; do \
+		sudo cp $$file $(INSTALL_ROOT)/bin ; \
+		done
