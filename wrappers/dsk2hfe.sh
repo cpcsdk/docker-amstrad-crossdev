@@ -17,7 +17,7 @@ then
 fi
 
 dockerdir=/tmp
-hostdir=$(realpath $(dirname $input))
+hostdir=$(realpath $(dirname "$input"))
 
 
 input=$dockerdir/$(basename "$input")
@@ -26,8 +26,9 @@ output=$(dirname "$input")/$(basename "$input" .dsk).hfe
 echo Convert $input to $output
 
 docker run --rm=true \
+	--env="LD_LIBRARY_PATH=/usr/local/lib" \
 	-v $hostdir:$dockerdir \
 	-t cpcsdk/crossdev \
-	hxcfe "-finput:$input" "-foutput:$output" -conv:HXC_HFE
+	/usr/local/bin/hxcfe "-finput:$input" "-foutput:$output" -conv:HXC_HFE
 
 
