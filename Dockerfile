@@ -19,6 +19,12 @@ WORKDIR /cpcsdk
 ADD data/Makefile /cpcsdk/Makefile
 RUN make install_all
 
+
+# AFT version for the cpc booster
+ADD data/minibooster/aft /usr/local/bin/aft-minibooster
+RUN chmod +x /usr/local/bin/aft-minibooster
+
+
 # Create the user of interest
 RUN useradd \
 	--home-dir /home/arnold \
