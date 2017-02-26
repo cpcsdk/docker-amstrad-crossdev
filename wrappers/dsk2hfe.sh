@@ -19,9 +19,10 @@ fi
 dockerdir=/tmp
 hostdir=$(realpath $(dirname "$input"))
 
+extension="${input##*.}"
 
 input=$dockerdir/$(basename "$input")
-output=$(dirname "$input")/$(basename "$input" .dsk).hfe
+output=$(dirname "$input")/$(basename "$input" $extension)hfe
 
 echo Convert $input to $output
 
@@ -32,3 +33,5 @@ docker run --rm=true \
 	/usr/local/bin/hxcfe "-finput:$input" "-foutput:$output" -conv:HXC_HFE
 
 
+
+mv $hostdir/$(basename "$input" $extension)hfe .
