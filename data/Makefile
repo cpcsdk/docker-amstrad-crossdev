@@ -29,6 +29,10 @@ GENERAL_DEPENDENCIES=\
 		wget \
 		wine 
 
+HXC_DEPENDENCIES=\
+		 libftdi-dev \
+		 libftdi1 
+
 EDITOR_DEPENDENCIES=\
 	exuberant-ctags \
 	libcanberra-gtk-module  \
@@ -83,10 +87,11 @@ install_dependencies:
 		dpkg --add-architecture i386 && \
 		add-apt-repository ppa:ubuntu-wine/ppa && \
 		apt-get update && \
-		apt-get install  -qy \
+		apt-get install  -qy --allow-unauthenticated \
 			$(GENERAL_DEPENDENCIES) \
 			$(EDITOR_DEPENDENCIES) \
 			$(CPCTELERA_DEPENDENCIES) \
+			$(HXC_DEPENDENCIES) \
 			$(GIT_SVN_DEPENDENCIES) && \
 		apt-get purge -y software-properties-common && \
 		apt-get autoclean -y &&\

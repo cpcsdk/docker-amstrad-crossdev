@@ -288,8 +288,13 @@ Welcome in the Amstrad CPC Crossdev machine
  - vlink
  - exomizer
  - cpctelera (need to be tested / may be incompatible with my own tool chain)
+ - hxcfe
 
 Contact Krusty/Benediction if other tools are needed
 EOF
 
+
+
+
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
