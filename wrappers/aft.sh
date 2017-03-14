@@ -2,15 +2,18 @@
 
 
 # Usage:
-#    AFTDEVICE=/dev/ttyUSB1 aft.sh -p /dev/ttyUSB1
-#    aft.sh
+#    AFTDEVICE=/dev/ttyUSB1 aft.sh 
 
 hostdir=$(pwd)
 dockerdir=/aftdir
 
+if test -z "$AFTDEVICE"
+then
+	AFTDEVICE=/dev/ttyUSB0
+fi
 
-AFTDEVICE=${AFTDEVICE:-/dev/ttyUSB0}
 
+echo "Use port $AFTDEVICE"
 ls *.sna *.dsk
 docker run --rm=true \
 	--env="LD_LIBRARY_PATH=/usr/local/lib" \
@@ -18,6 +21,6 @@ docker run --rm=true \
 	--device $AFTDEVICE \
 	--workdir "$dockerdir" \
 	-t cpcsdk/crossdev \
-	/usr/local/bin/aft-minibooster $*
+	/usr/local/bin/aft-minibooster -p $AFTDEVICE
 
 
