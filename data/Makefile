@@ -1,7 +1,7 @@
 # Installations scripts / Must be run as root
 
 
-# 2017-03-17: Rebuild forced to get latest pycpcdemo version
+# 2017-03-27: Rebuild forced to get latest pycpcdemo version +1
 
 VASM_URL?=http://server.owl.de/~frank/tags/vasm1_7g.tar.gz
 VLINK_URL?=http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
