@@ -1,7 +1,7 @@
 # Installations scripts / Must be run as root
 
 
-# 2017-03-27: Rebuild forced to get latest pycpcdemo version +1
+# 2017-04-09: Rebuild because of a big change in cpcsdk toolbox
 
 VASM_URL?=http://server.owl.de/~frank/tags/vasm1_7g.tar.gz
 VLINK_URL?=http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
@@ -9,6 +9,10 @@ EXOMIZER_URL?=http://hem.bredband.net/magli143/exo/exomizer209.zip
 LIBDSK_URL=http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
 HFE_URL=svn://svn.code.sf.net/p/hxcfloppyemu/code/
 CPCTELERA_URL?=https://github.com/lronaldo/cpctelera/archive/v1.4.tar.gz 
+CPCSDK_URL=https://github.com/cpcsdk/cpctools.git 
+IDSK_URL=https://github.com/cpcsdk/idsk.git
+HIDEUR_MAKER_URL=https://github.com/cpcsdk/hideur_maikeur.git
+GFX2CRTC_URL=git@github.com:cpcsdk/gfx2crtc.git
 
 INSTALLATION_BIN=/usr/local/bin
 LIBDSK_HEADERS_DIR=/usr/local/include/
@@ -63,7 +67,7 @@ GIT_SVN_DEPENDENCIES=\
 
 
 .PHONY:install_all
-install_all:
+install_all: #quick_test
 	$(MAKE) build_dirs
 	$(MAKE) install_dependencies
 	$(MAKE) install_libdsk
@@ -77,6 +81,12 @@ install_all:
 	rm -rf $(SRC_DIR)
 	$(MAKE) install_winape
 
+
+quick_test:
+	$(MAKE) build_dirs
+	$(MAKE) install_dependencies
+	$(MAKE) install_libdsk
+	$(MAKE) install_cpcsdk
 
 .PHONY:build_dirs
 build_dirs:
@@ -137,19 +147,12 @@ install_exomizer:
 # CPCSDK stuff
 install_cpcsdk:
 	cd $(SRC_DIR) && \
-	git clone --depth=1 https://github.com/cpcsdk/cpctools.git && \
+	git clone --depth=1 $(CPCSDK_URL) && \
 	cd cpctools/cpctools && \
 	sed -e '1i#include <cstdlib>' -i $(LIBDSK_HEADERS_DIR)/libdsk.h && \
 	cmake -DLIBDSK_HEADERS_DIR=$(LIBDSK_HEADERS_DIR)  . && \
 	make createSnapshot && \
 	cp tools/createSnapshot $(INSTALLATION_BIN) && \
-	cd ../hideur_maikeur && \
-	make -f Makefile-unix.eng ; \
-	cp hideur $(INSTALLATION_BIN) && \
-	cd ../iDSK && \
-	cmake .  && \
-	make -j2 iDSK && \
-	cp iDSK $(INSTALLATION_BIN) && \
 	cd ../cpctools/tools/AFT2 && \
 	make aft2 && \
 	cp aft2 $(INSTALLATION_BIN) && \
@@ -160,6 +163,19 @@ install_cpcsdk:
 	cp libcpc.so $(INSTALLATION_BIN)/../lib && \
 	cd ../../.. && \
 	rm -rf cpctools
+	git clone --depth=1 $(HIDEUR_MAKER_URL)
+	cd hideur_maikeur && \
+	make -f Makefile-unix.eng ; \
+	cp hideur $(INSTALLATION_BIN) && \
+	cd .. && \
+	rm -rf hideur_maikeur
+	git clone --depth=1 $(IDSK_URL) && \
+	cd idsk && \
+	cmake .  && \
+	make -j2 iDSK && \
+	cp iDSK $(INSTALLATION_BIN) && \
+	cd .. && \
+	rm -rf iDSK
 	touch $@
 
 
