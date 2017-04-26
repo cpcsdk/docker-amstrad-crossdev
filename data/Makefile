@@ -34,7 +34,7 @@ GENERAL_DEPENDENCIES=\
 		python-matplotlib \
 		unzip \
 		wget \
-		wine 
+		wine64
 
 HXC_DEPENDENCIES=\
 		 libftdi-dev \
@@ -96,10 +96,6 @@ build_dirs:
 # install the set of dependencies
 install_dependencies:
 	apt-get update && \
-		apt-get install -qy software-properties-common && \
-		dpkg --add-architecture i386 && \
-		add-apt-repository ppa:ubuntu-wine/ppa && \
-		apt-get update && \
 		apt-get install  -qy --allow-unauthenticated \
 			$(GENERAL_DEPENDENCIES) \
 			$(EDITOR_DEPENDENCIES) \

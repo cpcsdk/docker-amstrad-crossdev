@@ -6,7 +6,7 @@
 # evolve without changing their URL (vasm for example)
 
 
-FROM ubuntu:16.04
+FROM ubuntu:17.04
 MAINTAINER Romain Giot <giot.romain@gmail.com>
 
 ENV TERM xterm-256color
