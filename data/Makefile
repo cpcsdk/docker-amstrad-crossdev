@@ -1,9 +1,9 @@
 # Installations scripts / Must be run as root
 
 
-# 2017-04-09: Rebuild because of a big change in cpcsdk toolbox
+# 2017-05-19: Rebuild because of vasm update / fix pycpcdemotools .
 
-VASM_URL?=http://server.owl.de/~frank/tags/vasm1_7g.tar.gz
+VASM_URL?=http://server.owl.de/~frank/tags/vasm1_8.tar.gz
 VLINK_URL?=http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
 EXOMIZER_URL?=http://hem.bredband.net/magli143/exo/exomizer209.zip
 LIBDSK_URL=http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
@@ -13,6 +13,11 @@ CPCSDK_URL=https://github.com/cpcsdk/cpctools.git
 IDSK_URL=https://github.com/cpcsdk/idsk.git
 HIDEUR_MAKER_URL=https://github.com/cpcsdk/hideur_maikeur.git
 GFX2CRTC_URL=git@github.com:cpcsdk/gfx2crtc.git
+ARNOLD_URL=http://cpctech.cpc-live.com/arnoldsrc.zip
+ARNOLD_SHA1SUM=ae736bd73a379471d3b23b30ae685ba1157d0ce1
+TOCDT_URL=http://cpctech.cpc-live.com/download/2cdt.zip
+PLAYTZX_URL=https://github.com/ralferoo/cpctools.git
+CPCXFER_URL=https://github.com/M4Duke/cpcxfer.git
 
 INSTALLATION_BIN=/usr/local/bin
 LIBDSK_HEADERS_DIR=/usr/local/include/
@@ -65,9 +70,16 @@ GIT_SVN_DEPENDENCIES=\
 	meld \
 	subversion
 
+# XXX Attention, some dependencies are related to the developmenet on Arnold, not its construction
+ARNOLD_DEPENDENCIES=\
+	libsdl-image1.2 libsdl1.2-dev libsdl1.2debian \
+	libwxbase3.0-0v5 libwxbase3.0-dev libwxgtk3.0-0v5 libwxgtk3.0-dev wx3.0-headers \
+	fossil \
+	pasmo
+
 
 .PHONY:install_all
-install_all: #quick_test
+install_all: 
 	$(MAKE) build_dirs
 	$(MAKE) install_dependencies
 	$(MAKE) install_libdsk
@@ -77,16 +89,17 @@ install_all: #quick_test
 		install_hfestuff \
 		install_pycpc \
 		install_vasm \
-		install_vlink
+		install_vlink \
+		install_arnold_and_deps \
+		install_cpcxfer
 	rm -rf $(SRC_DIR)
-	$(MAKE) install_winape
+	#$(MAKE) install_winape
 
 
 quick_test:
 	$(MAKE) build_dirs
 	$(MAKE) install_dependencies
-	$(MAKE) install_libdsk
-	$(MAKE) install_cpcsdk
+	$(MAKE) install_cpcxfer
 
 .PHONY:build_dirs
 build_dirs:
@@ -95,18 +108,52 @@ build_dirs:
 
 # install the set of dependencies
 install_dependencies:
-	apt-get update && \
-		apt-get install  -qy --allow-unauthenticated \
+	apt-get update && apt-get install -q -y --no-upgrade software-properties-common && add-apt-repository ppa:saiarcot895/myppa && apt-get update && apt-get -y install -qy --no-upgrade apt-fast 
+	apt-fast update && \
+		apt-fast install  -q -y --allow-unauthenticated --no-upgrade --show-progress \
 			$(GENERAL_DEPENDENCIES) \
 			$(EDITOR_DEPENDENCIES) \
 			$(CPCTELERA_DEPENDENCIES) \
 			$(HXC_DEPENDENCIES) \
-			$(GIT_SVN_DEPENDENCIES) && \
+			$(GIT_SVN_DEPENDENCIES) \
+			$(ARNOLD_DEPENDENCIES) && \
 		apt-get purge -y software-properties-common && \
 		apt-get autoclean -y &&\
 		rm -rf /var/lib/apt/lists/*
 	touch $@
 
+
+
+install_cpcxfer:
+	cd $(SRC_DIR) && git clone $(CPCXFER_URL) && cd cpcxfer && \
+	make && cp xfer /usr/local/bin && \
+	cp pyxfer.py /usr/local/bin && \
+	cd .. && rm -rf cpcxfer
+		
+
+install_arnold_and_deps:
+	cd $(SRC_DIR) && wget $(TOCDT_URL) -O 2cdt.zip && \
+    unzip 2cdt.zip && \
+    cd 2cdt && \
+    make 2cdt && \
+    cp 2cdt /usr/local/bin && \
+		cd .. && \
+		rm -rf 2cdt*
+	cd $(SRC_DIR) && git clone --depth 1 $(PLAYTZX_URL) ralferoo && \
+    cd ralferoo/playtzx-0.12b && \
+    ./configure && \
+    make install
+	cd $(SRC_DIR) && \
+		wget $(ARNOLD_URL) && \
+		test "$$(sha1sum arnoldsrc.zip | cut -f1 -d' ')" !=  "$(ARNOLD_SHA1SUM)"
+	cd $(SRC_DIR) && \
+		unzip arnoldsrc.zip && \
+		cd src && \
+		find . -name "*.sh" -exec chmod +x \{\} \; &&  \
+		mv ./cpc/EmuDevice.h  ./cpc/emudevice.h && \
+	  ./make_arnz80_release.sh && \
+		mkdir -p /opt/ && \
+		cp -R ../exe/Release/arnold /opt/arnoldemu
 
 
 
