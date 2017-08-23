@@ -8,7 +8,7 @@ VLINK_URL?=http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
 EXOMIZER_URL?=http://hem.bredband.net/magli143/exo/exomizer209.zip
 LIBDSK_URL=http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
 HFE_URL=svn://svn.code.sf.net/p/hxcfloppyemu/code/
-CPCTELERA_URL?=https://github.com/lronaldo/cpctelera/archive/v1.4.tar.gz 
+CPCTELERA_URL?=https://github.com/lronaldo/cpctelera/archive/v1.4.2.zip
 CPCSDK_URL=https://github.com/cpcsdk/cpctools.git 
 IDSK_URL=https://github.com/cpcsdk/idsk.git
 HIDEUR_MAKER_URL=https://github.com/cpcsdk/hideur_maikeur.git
@@ -18,6 +18,7 @@ ARNOLD_SHA1SUM=ae736bd73a379471d3b23b30ae685ba1157d0ce1
 TOCDT_URL=http://cpctech.cpc-live.com/download/2cdt.zip
 PLAYTZX_URL=https://github.com/ralferoo/cpctools.git
 CPCXFER_URL=https://github.com/M4Duke/cpcxfer.git
+CPCXFS_URL=http://cpctech.cpc-live.com/download/cpcxfs.zip
 
 INSTALLATION_BIN=/usr/local/bin
 LIBDSK_HEADERS_DIR=/usr/local/include/
@@ -70,6 +71,8 @@ GIT_SVN_DEPENDENCIES=\
 	meld \
 	subversion
 
+CPCXFS_DEPENDENCIES=libncurses5-dev
+
 # XXX Attention, some dependencies are related to the developmenet on Arnold, not its construction
 ARNOLD_DEPENDENCIES=\
 	libsdl-image1.2 libsdl1.2-dev libsdl1.2debian \
@@ -78,12 +81,16 @@ ARNOLD_DEPENDENCIES=\
 	pasmo
 
 
+NPROCS=1
+#NPROCS=$(shell, nproc)
+
 .PHONY:install_all
 install_all: 
 	$(MAKE) build_dirs
 	$(MAKE) install_dependencies
 	$(MAKE) install_libdsk
-	$(MAKE) -j $$(nproc) install_exomizer \
+	$(MAKE) -j $(NPROCS) install_cpcxfs \
+		install_exomizer \
 		install_cpcsdk \
 		install_cpctelera \
 		install_hfestuff \
@@ -116,7 +123,8 @@ install_dependencies:
 			$(CPCTELERA_DEPENDENCIES) \
 			$(HXC_DEPENDENCIES) \
 			$(GIT_SVN_DEPENDENCIES) \
-			$(ARNOLD_DEPENDENCIES) && \
+			$(ARNOLD_DEPENDENCIES) \
+			$(CPCXFS_DEPENDENCIES) && \
 		apt-get purge -y software-properties-common && \
 		apt-get autoclean -y &&\
 		rm -rf /var/lib/apt/lists/*
@@ -154,6 +162,16 @@ install_arnold_and_deps:
 	  ./make_arnz80_release.sh && \
 		mkdir -p /opt/ && \
 		cp -R ../exe/Release/arnold /opt/arnoldemu
+
+
+install_cpcxfs:
+	cd $(SRC_DIR) && wget $(CPCXFS_URL) -O cpcxfs.zip && \
+	unzip cpcxfs.zip && \
+	cd cpcxfs/src && \
+	make -f makefile.lnx clean && \
+	make -f makefile.lnx && \
+	cp cpcxfs /usr/local/bin && \
+	cd $(SRC_DIR) && rm -rf cpcxfs*
 
 
 
@@ -225,8 +243,8 @@ install_cpcsdk:
 # add cpctelera
 install_cpctelera:
 	cd $(CPCTELERA_DIR) && \
-	wget ${CPCTELERA_URL} -O -| \
-	tar -xzf - && \
+	wget ${CPCTELERA_URL} -O cpctelera.zip && \
+	unzip cpctelera.zip && \
 	cd cpctelera-* && \
 	./setup.sh
 	touch $@
