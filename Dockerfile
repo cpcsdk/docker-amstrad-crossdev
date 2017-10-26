@@ -6,7 +6,7 @@
 # evolve without changing their URL (vasm for example)
 
 
-FROM ubuntu:17.04
+FROM ubuntu:17.10
 MAINTAINER Romain Giot <giot.romain@gmail.com>
 
 ENV TERM xterm-256color
@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install make
 
 RUN mkdir /cpcsdk
 WORKDIR /cpcsdk
+ADD data/dependencies.mk /cpcsdk/dependencies.mk
+RUN make -f /cpcsdk/dependencies.mk setup
 ADD data/Makefile /cpcsdk/Makefile
 RUN make install_all
 

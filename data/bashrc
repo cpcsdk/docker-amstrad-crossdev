@@ -273,12 +273,13 @@ Welcome in the Amstrad CPC Crossdev machine
 
 # Installed tools:
 
-## PC related :
+## PC related:
 
+ - grafx2
  - git
  - meld
 
-## CPC related :
+## CPC related:
 
  - iDSK
  - createSnapshot

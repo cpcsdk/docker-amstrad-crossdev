@@ -1,5 +1,5 @@
 IMAGE?=cpcsdk/crossdev
-VERSION?=2.5
+VERSION?=2.7
 
 INSTALL_ROOT?=/usr/local
 
@@ -22,6 +22,10 @@ test:
 		./bootstrap.sh make distclean && \
 		./bootstrap.sh make ALL && \
 		./bootstrap.sh test
+
+
+open:
+	docker run -e DISPLAY=$(DISPLAY) -v /tmp/.X11-unix:/tmp/.X11-unix --privileged --rm=true -i -t $(IMAGE)
 
 # Install on the host machine the scripts
 install_wrappers:
