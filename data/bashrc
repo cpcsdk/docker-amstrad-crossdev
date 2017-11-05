@@ -304,6 +304,6 @@ EOF
 
 
 
-export PATH="/opt/Arkos\ Tracker\ 2:/opt/Arkos\ Tracker\ 2/tools:/opt/arnoldemu/:$PATH"
+export PATH="/opt/Arkos Tracker 2:/opt/Arkos Tracker 2/tools:/opt/arnoldemu/:$PATH"
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
