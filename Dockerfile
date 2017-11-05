@@ -55,7 +55,7 @@ ADD data/bashrc /home/arnold/.bashrc
 ADD data/vimrc /home/arnold/.vimrc
 ADD data/ctags /home/arnold/.ctags
 
-RUN git config --global merge.tool meld
+RUN git config --global merge.tool meld 
 
 # ensure the shell will properly work
 
