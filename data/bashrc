@@ -268,18 +268,26 @@ PS1="\[$sexy_bash_prompt_user_color\]\u\[$sexy_bash_prompt_reset\] \
   echo -n \"\[$sexy_bash_prompt_preposition_color\]\")\n\[$sexy_bash_prompt_reset\]\
 \[$sexy_bash_prompt_symbol_color\]$sexy_bash_prompt_symbol \[$sexy_bash_prompt_reset\]"
 
+
+
+bold=$(tput bold)
+normal=$(tput sgr0)
+
+
 cat <<EOF
 Welcome in the Amstrad CPC Crossdev machine
 
-# Installed tools:
+${bold}INSTALLED TOOLS${normal}
 
-## PC related:
+${bold}PC related${normal}
 
  - grafx2
  - git
  - meld
+ - Arkos Tracker 2
+ - Arnold emulator
 
-## CPC related:
+${bold}CPC related${normal}
 
  - iDSK
  - createSnapshot
@@ -296,6 +304,6 @@ EOF
 
 
 
-
+export PATH="/opt/Arkos\ Tracker\ 2:/opt/Arkos\ Tracker\ 2/tools:/opt/arnoldemu/:$PATH"
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 

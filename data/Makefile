@@ -1,5 +1,6 @@
 # Installations scripts / Must be run as root
 
+# 2017-11-05: Add Arkos Tracker
 # 2017-10-25: Add Grafx2
 # 2017-05-19: Rebuild because of vasm update / fix pycpcdemotools .
 
@@ -21,7 +22,8 @@ install_all:
 		install_vasm \
 		install_vlink \
 		install_arnold_and_deps \
-		install_cpcxfer
+		install_cpcxfer \
+		install_at2
 	rm -rf $(SRC_DIR)
 	#$(MAKE) install_winape
 
@@ -193,6 +195,11 @@ install_winape:
 	mkdir -p /winape && cd /winape && wget http://winape.net/download/WinAPE20B2.zip && unzip WinAPE20B2.zip && ls -R
 	touch $@
 
+
+install_at2:
+	mkdir -p /opt/ && cd /opt/ && \
+		wget "http://www.julien-nevo.com/arkostracker/release/linux/Arkos%20Tracker%202%20Linux.zip" && \
+		unzip *.zip && rm *.zip
 
 
 

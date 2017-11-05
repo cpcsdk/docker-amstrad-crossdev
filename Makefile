@@ -1,5 +1,5 @@
 IMAGE?=cpcsdk/crossdev
-VERSION?=2.7
+VERSION?=2.8
 
 INSTALL_ROOT?=/usr/local
 
@@ -25,7 +25,17 @@ test:
 
 
 open:
-	docker run -e DISPLAY=$(DISPLAY) -v /tmp/.X11-unix:/tmp/.X11-unix --privileged --rm=true -i -t $(IMAGE)
+	docker run -e DISPLAY=$(DISPLAY) \
+		-v /tmp/.X11-unix:/tmp/.X11-unix   \
+	      	-v /dev/snd:/dev/snd \
+		 -v /dev/shm:/dev/shm \
+		 -v /etc/machine-id:/etc/machine-id \
+		 -v /run/user/$$(id -u)/pulse:/run/user/$$(id -u)/pulse \
+		 -v /var/lib/dbus:/var/lib/dbus \
+		 -v ~/.pulse:/home/arnold/.pulse \
+		 --privileged \
+		--rm=true \
+		-i -t $(IMAGE)
 
 # Install on the host machine the scripts
 install_wrappers:

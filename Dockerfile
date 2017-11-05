@@ -34,6 +34,7 @@ RUN useradd \
 	--shell /bin/bash \
 	arnold
 RUN addgroup arnold dialout
+RUN addgroup arnold audio
 USER arnold
 
 RUN winecfg
