@@ -28,6 +28,7 @@ SRC_DIR?=/src # Source folder where to download all applications
 GENERAL_DEPENDENCIES=\
 		silversearcher-ag \
 		bc \
+		bless \
 		build-essential \
 		cmake \
 		cmake \
@@ -61,8 +62,13 @@ CPCTELERA_DEPENDENCIES=\
 	bison \
 	flex \
 	libboost-dev \
-	libfreeimage-dev 
-	
+	libfreeimage-dev \
+	mono-complete \
+	g++ \
+	gcc \
+	wget \
+	unzip
+
 
 GIT_SVN_DEPENDENCIES=\
 	git \

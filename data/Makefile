@@ -11,6 +11,7 @@ NPROCS=1
 
 .PHONY:install_all
 install_all:
+	#$(MAKE) install_cpctelera  # unique target when testing stuff
 	$(MAKE) -j $(NPROCS) \
 		install_grafx2 \
 		install_cpcxfs \
@@ -140,7 +141,8 @@ install_cpctelera:
 	wget ${CPCTELERA_URL} -O cpctelera.zip && \
 	unzip cpctelera.zip && \
 	cd cpctelera-* && \
-	./setup.sh
+	./setup.sh && \
+	cd .. && rm cpctelera.zip
 	touch $@
 
 # add hfe creation

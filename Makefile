@@ -1,5 +1,5 @@
 IMAGE?=cpcsdk/crossdev
-VERSION?=2.8
+VERSION?=2.9
 
 INSTALL_ROOT?=/usr/local
 

@@ -61,3 +61,8 @@ RUN git config --global merge.tool meld
 
 # ensure X tools can be used
 
+
+ENV CPCT_PATH /usr/local/cpctelera/cpctelera-1.4.2/cpctelera
+ENV AKS_TRAKER2_PATH "/opt/Arkos Tracker 2"
+
+ENV PATH "/opt/Arkos Tracker 2:/opt/Arkos Tracker 2/tools:/opt/arnoldemu/:$CPCT_PATH/tools/scripts/:$PATH"
