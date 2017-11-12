@@ -21,6 +21,14 @@ RUN make -f /cpcsdk/dependencies.mk setup
 ADD data/Makefile /cpcsdk/Makefile
 RUN make install_all
 
+# Compile rasm
+ADD data/rasm /tmp/rasm/
+WORKDIR /tmp/rasm
+RUN gcc *.c -o /usr/local/bin/rasm -lm
+WORKDIR /cpcsdk
+RUN rm -rf /tmp/rasm
+
+
 
 # AFT version for the cpc booster
 ADD data/minibooster/aft /usr/local/bin/aft-minibooster

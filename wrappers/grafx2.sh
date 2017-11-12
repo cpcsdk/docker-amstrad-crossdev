@@ -2,6 +2,7 @@
 
 
 # Start grafx2. The current folder is used as pictures folder
+# TODO Add options to select of folder or file
 
 echo "Workdirectory is /pictures"
 
