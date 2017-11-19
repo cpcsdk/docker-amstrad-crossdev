@@ -280,16 +280,25 @@ Welcome in the Amstrad CPC Crossdev machine
 ${bold}INSTALLED TOOLS${normal}
 
 ${bold}PC related${normal}
+EOF
+
+column <<EOF
 
  - grafx2
  - git
  - meld
  - Arkos Tracker 2
  - Arnold emulator
+EOF
+
+cat <<EOF
 
 ${bold}CPC related${normal}
+EOF
 
- - cpctelera (need to be tested / may be incompatible with my own tool chain)
+column <<EOF
+
+ - cpctelera 
  - exomizer
  - iDSK
  - createSnapshot
@@ -299,6 +308,9 @@ ${bold}CPC related${normal}
  - rasm
  - vasm
  - vlink
+EOF
+
+cat <<EOF
 
 Contact Krusty/Benediction if other tools are needed
 EOF
