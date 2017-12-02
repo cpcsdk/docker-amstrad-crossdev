@@ -141,9 +141,18 @@ install_libdsk:
 	touch $@
 
 
+# The containter stuff does not work properly when host user has not id 1000.
+# The aim of this rule is to install a soft that fixes that
+install_user_managment:
+	gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
+	curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.10/gosu-$$(dpkg --print-architecture)" \
+	    && curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/1.10/gosu-$$(dpkg --print-architecture).asc" \
+	    && gpg --verify /usr/local/bin/gosu.asc \
+	    && rm /usr/local/bin/gosu.asc \
+	    && chmod +x /usr/local/bin/gosu
 
 
 .PHONY: setup
-setup: build_dirs install_dependencies install_libdsk
+setup: build_dirs install_dependencies install_libdsk install_user_managment
 
 
