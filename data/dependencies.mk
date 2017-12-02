@@ -95,6 +95,9 @@ ARNOLD_DEPENDENCIES=\
 	pasmo
 
 
+WINE_DEPENDENCIES=\
+		  xvfb wine64
+
 
 # install the set of dependencies
 install_dependencies:
@@ -109,7 +112,8 @@ install_dependencies:
 				$(GIT_SVN_DEPENDENCIES) \
 				$(ARNOLD_DEPENDENCIES) \
 				$(CPCXFS_DEPENDENCIES) \
-				$(GRAFX2_DEPENDENCIES) && \
+				$(GRAFX2_DEPENDENCIES) \
+				$(WINE_DEPENDENCIES) && \
 			apt-get purge -y software-properties-common && \
 			apt-get autoclean -y &&\
 			rm -rf /var/lib/apt/lists/*

@@ -11,7 +11,7 @@ NPROCS=1
 
 .PHONY:install_all
 install_all:
-	#$(MAKE) install_cpctelera  # unique target when testing stuff
+	#$(MAKE) install_z80tonops # unique target when testing stuff
 	$(MAKE) -j $(NPROCS) \
 		install_grafx2 \
 		install_cpcxfs \
@@ -24,10 +24,18 @@ install_all:
 		install_vlink \
 		install_arnold_and_deps \
 		install_cpcxfer \
-		install_at2
+		install_at2 \
+		install_z80tonops \
+		install_winape
 	rm -rf $(SRC_DIR)
 	#$(MAKE) install_winape
 
+
+
+install_z80tonops:
+	cd $(SRC_DIR) && git clone https://github.com/cpcsdk/z80tonops.git
+	cd $(SRC_DIR) && cd z80tonops/src && cmake . && make install
+	cd $(SRC_DIR) && rm -rf z80tonops
 
 quick_test:
 	$(MAKE) build_dirs
@@ -195,6 +203,7 @@ install_vlink:
 # Add winape
 install_winape:
 	mkdir -p /winape && cd /winape && wget http://winape.net/download/WinAPE20B2.zip && unzip WinAPE20B2.zip && ls -R
+	-xvfb-run -a wine start "FAIL" #ensure wine configuration is done. Note that this call will obviously fail
 	touch $@
 
 
