@@ -4,10 +4,9 @@
 # Bootstrap script needed to launch the environement
 #
 
-# Specific variables for the current project
+DOCKER_IMAGE=benediction/experts
+DSK_TEST=./experts_bugfixed.dsk
 
-DOCKER_IMAGE=cpcsdk/crossdev
-DSK_TEST=experts_bugfixed.dsk
 
 
 # Common code for all the projects
@@ -28,28 +27,52 @@ linux)
 	LOCAL_WORKING_DIRECTORY=$(pwd)
 	DOCKER_WORKING_DIRECTORY=/home/arnold/project
 	DOCKER_X11_FORWARDING="-e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --privileged"
+	DOCKER_SOUND_CONFIGURATION="-v /dev/snd:/dev/snd -v /dev/shm:/dev/shm -v /etc/machine-id:/etc/machine-id -v /run/user/$(id -u)/pulse:/run/user/$(id -u)/pulse -v /var/lib/dbus:/var/lib/dbus -v $HOME/.pulse:/home/arnold/.pulse"
 	;;
 
 windows)
 	LOCAL_WORKING_DIRECTORY=/$(pwd)
 	DOCKER_WORKING_DIRECTORY=//home/arnold/project
 	DOCKER_X11_FORWARDING=""
+	DOCKER_SOUND_CONFIGURATION=""
 	;;
 esac
 
 DOCKER=docker
 DOCKER_HOSTNAME=$(basename $(pwd))
+DOCKER_USER_OPTION="-e LOCAL_USER_ID=$(id -u $USER)"
+
+DOCKER_BASEIMAGE=$(grep FROM Dockerfile | sed -e 's/^FROM\s*//')
+if [[ $DOCKER_BASEIMAGE == *:* ]]
+then
+    DOCKER_BASEIMAGE="$DOCKER_BASEIMAGE"
+else
+    DOCKER_BASEIMAGE="$DOCKER_BASEIMAGE:latest"
+fi
+
+
+# Extract the construction date of a Docker container
+# Input:
+# - $1 Container name
+function docker_date()
+{
+    docker inspect "$1" | grep -i created | sed -e 's/^.*: "//' -e 's/",.*$//'
+}
+
+# Get docker container dates (docker format)
+DOCKER_IMAGE_DATE=$(docker_date $DOCKER_IMAGE)
+DOCKER_BASEIMAGE_DATE=$(docker_date $DOCKER_BASEIMAGE)
+
+# Impose a specific format to ease comparison
+DATE_FORMAT_EXPECTED="%s"
+DOCKER_BASEIMAGE_DATE=$(date -d "$DOCKER_BASEIMAGE_DATE"  "+$DATE_FORMAT_EXPECTED")
+DOCKER_IMAGE_DATE=$(date -d "$DOCKER_IMAGE_DATE"  "+$DATE_FORMAT_EXPECTED")
+DOCKERFILE_DATE=$(date -r Dockerfile "+$DATE_FORMAT_EXPECTED")
 
 
 function buildImage
 {
-    if test "$DOCKER_IMAGE" != "cpcsdk/crossdev"
-    then
-    	$DOCKER build -t $DOCKER_IMAGE .
-    else
-	echo "You need to create another image than cpcsdk/crossdev !" 2>&1
-	exit 1
-    fi
+    $DOCKER build -t $DOCKER_IMAGE .
 }
 
 function launchImage
@@ -78,17 +101,19 @@ function launchImage
 	fi
 
 
-    ALL_OPTIONS=" -h $DOCKER_HOSTNAME 
-	-v $LOCAL_WORKING_DIRECTORY:$DOCKER_WORKING_DIRECTORY 
-	-w $DOCKER_WORKING_DIRECTORY 
-	$DOCKER_X11_FORWARDING 
-	$DOCKER_AFT_OPTION 
+    ALL_OPTIONS=" -h $DOCKER_HOSTNAME
+	-v $LOCAL_WORKING_DIRECTORY:$DOCKER_WORKING_DIRECTORY
+	-w $DOCKER_WORKING_DIRECTORY
+	$DOCKER_X11_FORWARDING
+	$DOCKER_AFT_OPTION
+	$DOCKER_SOUND_CONFIGURATION
 	$AFT_OPTION
-	--rm=true 
-	-i 
-	-t 
-	$DOCKER_IMAGE 
-        $*"
+    $DOCKER_USER_OPTION
+	--rm=true
+	-i
+	-t
+	$DOCKER_IMAGE
+    $*"
 
 
     # launch the image
@@ -99,13 +124,7 @@ function launchImage
 
 function removeImage
 {
-    if test "$DOCKER_IMAGE" != "cpcsdk/crossdev"
-    then
- 	   $DOCKER rmi $DOCKER_IMAGE
-    else
-	    echo "You cannot remove the cpcsdk/crossdev image !" 2>&1
-	    exit 1
-    fi
+    $DOCKER rmi $DOCKER_IMAGE
 }
 
 
@@ -130,6 +149,24 @@ function launch
 
 
 
+function checkImageCoherence
+{
+
+if test "$DOCKER_BASEIMAGE_DATE" -gt "$DOCKER_IMAGE_DATE"
+then
+  echo "Parent image is newer -- I need to rebuild mine !!\n"
+  buildImage
+fi
+
+if test "$DOCKERFILE_DATE" -gt "$DOCKER_IMAGE_DATE"
+then
+  echo "Docker file is newer the container -- I need to rebuild it !!\n"
+  buildImage
+
+fi
+}
+
+
 
 case "$1" in
     rebuildImage)
@@ -142,13 +179,17 @@ case "$1" in
 		doHelp $0
 		;;
     test)
-		launch
+      checkImageCoherence
+      launch
 		;;
     "")
-        launchImage
+
+      checkImageCoherence
+      launchImage
 		;;
     *)
-		launchImage $*
+      checkImageCoherence
+      launchImage $*
 esac
 
 

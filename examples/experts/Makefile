@@ -2,6 +2,7 @@
 # Krusty/Benediction 2011
 # modification in 2015 in order to test docker
 
+ALL:
 include CPC.mk
 
 .SILENT:
