@@ -1,4 +1,4 @@
-VASM_URL?=http://server.owl.de/~frank/tags/vasm1_8.tar.gz
+VASM_URL?=http://server.owl.de/~frank/tags/vasm1_8a.tar.gz
 VLINK_URL?=http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
 EXOMIZER_URL?=http://hem.bredband.net/magli143/exo/exomizer209.zip
 LIBDSK_URL=http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
@@ -26,25 +26,26 @@ SRC_DIR?=/src # Source folder where to download all applications
 
 
 GENERAL_DEPENDENCIES=\
-		silversearcher-ag \
 		bc \
 		bless \
 		build-essential \
-		cmake \
-		cmake \
 		cloc \
+		cmake \
+		cmake \
 		curl \
 		make \
 		python \
-		python-matplotlib \
 		python3-pil \
+		python-matplotlib \
+		silversearcher-ag \
+		sudo \
 		unzip \
 		wget \
 		wine64
 
 HXC_DEPENDENCIES=\
-		 libftdi-dev \
-		 libftdi1 
+		 libftdi1 \
+		 libftdi-dev 
 
 EDITOR_DEPENDENCIES=\
 	exuberant-ctags \
@@ -53,21 +54,21 @@ EDITOR_DEPENDENCIES=\
 	vim-ctrlp \
 	vim-fugitive \
 	vim-gnome \
+	vim-pathogen \
 	vim-syntastic \
 	vim-ultisnips \
 	vim-youcompleteme \
-  	vim-fugitive
 
 CPCTELERA_DEPENDENCIES=\
 	bison \
 	flex \
+	g++ \
+	gcc \
 	libboost-dev \
 	libfreeimage-dev \
 	mono-complete \
-	g++ \
-	gcc \
-	wget \
-	unzip
+	unzip \
+	wget
 
 
 GIT_SVN_DEPENDENCIES=\
@@ -103,6 +104,7 @@ WINE_DEPENDENCIES=\
 install_dependencies:
 	DEBIAN_FRONTEND=noninteractive apt-get update && \
 			apt-get install -qq -y --no-upgrade software-properties-common && \
+			rm -rf /var/lib/apt/lists/* && apt-get clean && \
 			apt-get update && \
 			apt-get install  -qq -y --allow-unauthenticated --no-upgrade --show-progress \
 				$(GENERAL_DEPENDENCIES) \

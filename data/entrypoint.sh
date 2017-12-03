@@ -18,4 +18,9 @@ chown arnold $HOME -R
 sudo -u arnold git config --global merge.tool meld
 
 # Launch the command
+if test "$#" = "0"
+then
+exec /usr/local/bin/gosu arnold bash
+else
 exec /usr/local/bin/gosu arnold "$@"
+fi

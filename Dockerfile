@@ -11,7 +11,7 @@ MAINTAINER Romain Giot <giot.romain@gmail.com>
 
 ENV TERM xterm-256color
 
-RUN apt-get update && apt-get install make
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install make
 
 # Prepare construction
 RUN mkdir /cpcsdk
@@ -40,7 +40,6 @@ RUN mkdir -p /home/arnold
 
 # Install vim plugins
 RUN mkdir -p /home/arnold/.vim/autoload /home/arnold/.vim/bundle && \
-	curl -LSso /home/arnold/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim && \
 	cd /home/arnold/.vim/bundle && \
 	git clone --depth=1 https://github.com/majutsushi/tagbar && \
 	git clone --depth=1 https://github.com/xolox/vim-misc.git && \
