@@ -47,3 +47,6 @@ launch: BUILD_DSK
 
 launch_on_cpc: $(EXECUTABLE)
 	$(call RUN_FILE_ON_CPC,$(EXECUTABLE))
+
+test_from_host:
+	./bootstrap.sh make

@@ -38,28 +38,35 @@ esac
 
 DOCKER=docker
 DOCKER_HOSTNAME=$(basename $(pwd))
+DOCKER_USER_OPTION="-e LOCAL_USER_ID=$(id -u $USER)"
 
 DOCKER_BASEIMAGE=$(grep FROM Dockerfile | sed -e 's/^FROM\s*//')
 
-DOCKER_IMAGE_DATE=$(docker images --format="{{.CreatedAt}}" $DOCKER_IMAGE)
-
 if [[ $DOCKER_BASEIMAGE == *:* ]]
 then
-DOCKER_BASEIMAGE_DATE=$(docker images --format="{{.CreatedAt}}" $DOCKER_BASEIMAGE)
+    DOCKER_BASEIMAGE="$DOCKER_BASEIMAGE"
 else
-DOCKER_BASEIMAGE_DATE=$(docker images --format="{{.CreatedAt}}" $DOCKER_BASEIMAGE:latest)
+    DOCKER_BASEIMAGE="$DOCKER_BASEIMAGE:latest"
 fi
 
-echo $DOCKER_BASEIMAGE_DATE
 
-# XXX Attention here it is not portable at all
-# XXX Need to find a way which works everywhere
-DOCKER_BASEIMAGE_DATE=$( echo "$DOCKER_BASEIMAGE_DATE" | sed -e 's/..... CES\?T//')
-DOCKER_IMAGE_DATE=$( echo "$DOCKER_IMAGE_DATE" | sed -e 's/..... CES\?T//')
+# Extract the construction date of a Docker container
+# Input:
+# - $1 Container name
+function docker_date()
+{
+    docker inspect "$1" | grep -i created | sed -e 's/^.*: "//' -e 's/",.*$//'
+}
 
-DOCKER_BASEIMAGE_DATE=$(date -d "$DOCKER_BASEIMAGE_DATE"  '+%s')
-DOCKER_IMAGE_DATE=$(date -d "$DOCKER_IMAGE_DATE"  '+%s')
+# Get docker container dates (docker format)
+DOCKER_IMAGE_DATE=$(docker_date $DOCKER_IMAGE)
+DOCKER_BASEIMAGE_DATE=$(docker_date $DOCKER_BASEIMAGE)
 
+# Impose a specific format to ease comparison
+DATE_FORMAT_EXPECTED="%s"
+DOCKER_BASEIMAGE_DATE=$(date -d "$DOCKER_BASEIMAGE_DATE"  "+$DATE_FORMAT_EXPECTED")
+DOCKER_IMAGE_DATE=$(date -d "$DOCKER_IMAGE_DATE"  "+$DATE_FORMAT_EXPECTED")
+DOCKERFILE_DATE=$(date -r Dockerfile "+$DATE_FORMAT_EXPECTED")
 
 
 function buildImage
@@ -72,21 +79,21 @@ function launchImage
 
 
     # create the image if it does not exists
-    if test "$($DOCKER images -q $DOCKER_IMAGE 2> /dev/null)" = ""
+    if test "$($DOCKER images -q $DOCKER_IMAGE 2> /dev/null)" = "" 
     then
         buildImage
     fi
-
+	
 	# Manage parameters for aft
 	# XXX Implement a better and more robust way to do things ...
-	case $DETECTED_OS in
+	case $DETECTED_OS in 
 		linux) AFT_PORT=/dev/ttyUSB0 ;;
 		windows) AFT_PORT=/dev/ttyS3 ;;
 	esac
-
+	
     if  test -e "$AFT_PORT"
     then
-		AFT_OPTION="--device $AFT_PORT"
+		AFT_OPTION="--device $AFT_PORT" 
     else
 		echo "aft unusable ($AFT_PORT does not exists)" >&2
 		AFt_OPTION=""
@@ -100,11 +107,12 @@ function launchImage
 	$DOCKER_AFT_OPTION
 	$DOCKER_SOUND_CONFIGURATION
 	$AFT_OPTION
+    $DOCKER_USER_OPTION
 	--rm=true
 	-i
 	-t
 	$DOCKER_IMAGE
-        $*"
+    $*"
 
 
     # launch the image
@@ -148,6 +156,13 @@ then
   echo "Parent image is newer -- I need to rebuild mine !!\n"
   buildImage
 fi
+
+if test "$DOCKERFILE_DATE" -gt "$DOCKER_IMAGE_DATE"
+then
+  echo "Docker file is newer the container -- I need to rebuild it !!\n"
+  buildImage
+
+fi
 }
 
 
@@ -164,7 +179,7 @@ case "$1" in
 		;;
     test)
       checkImageCoherence
-	  	launch
+      launch
 		;;
     "")
 
@@ -173,7 +188,7 @@ case "$1" in
 		;;
     *)
       checkImageCoherence
-		  launchImage $*
+      launchImage $*
 esac
 
 
