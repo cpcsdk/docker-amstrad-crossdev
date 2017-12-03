@@ -1,5 +1,5 @@
 IMAGE?=cpcsdk/crossdev
-VERSION?=2.10
+VERSION?=3.0
 
 INSTALL_ROOT?=/usr/local
 
@@ -34,7 +34,10 @@ open:
 		 -v /var/lib/dbus:/var/lib/dbus \
 		 -v ~/.pulse:/home/arnold/.pulse \
 		 --privileged \
-		--rm=true \
+		 --rm=true \
+		 -e LOCAL_USER_ID=$$(id -u $$USER) \
+		 -v "$$(pwd):/home/arnold/project" \
+		 -w /home/arnold/project \
 		-i -t $(IMAGE)
 
 # Install on the host machine the scripts
