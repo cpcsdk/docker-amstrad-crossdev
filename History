@@ -1,0 +1,7 @@
+ * **3.0** Change the way to manage the arnold user (he is now build at launch no more at construction)
+ * **2.10**  Add z80tonops
+ * **2.9** Add CPCT_PATH variable to bashrc and fix cpctelera installation. Add Bless hexadecimal heditor. Add rasm
+ * **2.8** Add Arkos Tracker
+ * **2.6** Add the utility `grafx2`
+ * **2.5** Add the utility `cpcxfs`
+ * **2.4** Add the utility `xfer` usefull for the M4
