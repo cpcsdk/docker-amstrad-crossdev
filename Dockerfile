@@ -11,7 +11,7 @@ MAINTAINER Romain Giot <giot.romain@gmail.com>
 
 ENV TERM xterm-256color
 
-RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install make
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -qy make
 
 # Prepare construction
 RUN mkdir /cpcsdk

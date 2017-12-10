@@ -13,6 +13,7 @@ NPROCS=1
 install_all:
 	#$(MAKE) install_z80tonops # unique target when testing stuff
 	$(MAKE) -j $(NPROCS) \
+		install_chipnsfx \
 		install_grafx2 \
 		install_cpcxfs \
 		install_exomizer \
@@ -30,6 +31,15 @@ install_all:
 	rm -rf $(SRC_DIR)
 	#$(MAKE) install_winape
 
+
+install_chipnsfx:
+	cd $(SRC_DIR) && wget http://cngsoft.no-ip.org/chipnsfx-20171208.zip
+	cd $(SRC_DIR) && unzip chipnsfx-*.zip
+	mkdir -p /opt/chipnsfx
+	cd /opt/chipnsfx && unzip $(SRC_DIR)/chipnsfx*.zip
+	rm $(SRC_DIR)/chipnsfx*.zip
+	echo 'wineconsole /opt/chipnsfx/CHIPNSFX.EXE $$*' > /usr/local/bin/chipnsfx
+	chmod +x /usr/local/bin/chipnsfx
 
 
 install_z80tonops:

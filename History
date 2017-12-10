@@ -1,3 +1,4 @@
+ * **3.1** Add chipnsfx
  * **3.0** Change the way to manage the arnold user (he is now build at launch no more at construction)
  * **2.10**  Add z80tonops
  * **2.9** Add CPCT_PATH variable to bashrc and fix cpctelera installation. Add Bless hexadecimal heditor. Add rasm

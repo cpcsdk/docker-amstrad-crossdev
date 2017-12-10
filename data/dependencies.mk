@@ -19,8 +19,8 @@ GRAFX2_URL=https://gitlab.com/GrafX2/grafX2.git
 INSTALLATION_BIN=/usr/local/bin
 LIBDSK_HEADERS_DIR=/usr/local/include/
 
-CPCTELERA_DIR?=/usr/local/cpctelera # Folder where to install CPC telera stuff
-SRC_DIR?=/src # Source folder where to download all applications
+CPCTELERA_DIR?=/usr/local/cpctelera# Folder where to install CPC telera stuff
+SRC_DIR?=/src# Source folder where to download all applications
 
 
 
@@ -116,9 +116,10 @@ install_dependencies:
 				$(CPCXFS_DEPENDENCIES) \
 				$(GRAFX2_DEPENDENCIES) \
 				$(WINE_DEPENDENCIES) && \
+				dpkg --add-architecture i386 && apt-get update && apt-get -qq -y install wine32 && \
 			apt-get purge -y software-properties-common && \
 			apt-get autoclean -y &&\
-			rm -rf /var/lib/apt/lists/*
+			rm -rf /var/lib/apt/lists/* && \
 	touch $@
 
 
