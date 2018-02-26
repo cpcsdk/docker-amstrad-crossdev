@@ -39,18 +39,13 @@ Otherwhise :
   2. Install it and follow the instructions  
   
   
-### Pulling our image
 
- 1. Launch docker quickstart terminal
- 2. If errors appear in the terminal, you may correcting them by removing the default virtual machine of Virtual Box , closing docker quickstart and relaunching it
- 2. Once you have access to the terminal, type
- 
-```bat
-$ docker  pull cpcsdk/crossdev
-```
 
-### Or building yourself the image
+###  building yourself the image
 
+Launch Git bash:
+
+<<<<<<< HEAD
 You have to manually build and tag the container unders windows.
 It seems to use a contianer built under Linux may cause issues.
 
