@@ -53,10 +53,11 @@ quick_test:
 	$(MAKE) install_cpcxfer
 
 
+# deactivated / seems to not compile ...
 install_grafx2:
-	cd $(SRC_DIR) && git clone $(GRAFX2_URL)
-	cd $(SRC_DIR) && cd grafX2/src && make install prefix=/usr
-	cd $(SRC_DIR) && rm -rf grafX2
+	#cd $(SRC_DIR) && git clone $(GRAFX2_URL)
+	#cd $(SRC_DIR) && cd grafX2/src && make install prefix=/usr
+	#cd $(SRC_DIR) && rm -rf grafX2
 
 
 install_cpcxfer:

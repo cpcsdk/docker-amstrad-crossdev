@@ -51,8 +51,17 @@ $ docker  pull cpcsdk/crossdev
 
 ### Or building yourself the image
 
-Still from docker quickstart terminal
+You have to manually build and tag the container unders windows.
+It seems to use a contianer built under Linux may cause issues.
+
 ```
 $ cd <folder_with_Dockerfile>
-$ docker build -t local/crossdev .
+$ docker build -t cpcsdk/crossdev .
+$ docker tag cpcsdk/crossdev:latest cpcsdk/crossdev:3.1
+```
+
+The container can be tested by using:
+
+```
+$ winpty docker run --rm=true -i -t cpcsdk/crossdev
 ```

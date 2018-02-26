@@ -7,14 +7,17 @@ INSTALL_ROOT?=/usr/local
 # Build the docker container
 build:
 	docker build -t $(IMAGE) .
+	$(MAKE) tag
 
 
 # Create the tag of the current version and push it to the docker hub
-tag_and_push:
+push:
+	docker push $(IMAGE):$(VERSION)
+
+tag:
 	docker tag  \
 		$$(  docker images | grep cpcsdk/crossdev | grep latest | sed -e 's/.*latest\W*//'  -e 's/\(\w*\).*/\1/') \
 		$(IMAGE):$(VERSION)
-	docker push $(IMAGE):$(VERSION)
 
 
 test:
