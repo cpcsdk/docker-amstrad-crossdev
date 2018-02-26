@@ -1,3 +1,4 @@
+
 # docker-amstrad-crossdev
 Docker file to install various tools needed for Amstrad CPC crossdev
 
@@ -20,10 +21,10 @@ $ docker pull cpcsdk/crossdev
 ### Or building yourself the image
 
 ```
-$ docker build -t local/crossdev .
+$ docker build -t cpcsdk/crossdev .
 ```
 
-##Windows
+## Windows
 
 The aim of Docker is to manipulate Linux container. It is of course totally incompatible with Windows world !
 However, it is possible to use it thanks to Linux virtual machines...
