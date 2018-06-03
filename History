@@ -1,3 +1,6 @@
+ * **4.1** Add rust toolchain
+ * **4.0** Add SugarConvDsk, update chipnsfx, update exomizer, update rasm,  upgrade ubuntu to 18.04
+ * **3.2** Update pycpcdemotools
  * **3.1** Add chipnsfx
  * **3.0** Change the way to manage the arnold user (he is now build at launch no more at construction)
  * **2.10**  Add z80tonops

@@ -1795,11 +1795,6 @@ search_nodep search_buffer(match_ctx ctx,       /* IN */
         /* slow way to get to the next node for cur */
         --len;
         ++best_copy_len;
-        if(snp_arr[len]->match == NULL)
-        {
-            LOG(LOG_ERROR, ("Found unreachable node at len %d.\n", len));
-        }
-
     }
     if(len > 0 && mp == NULL)
     {
@@ -3238,6 +3233,7 @@ void log_log(struct log_ctx *ctx,       /* IN */
 
 void hex_dump(int level, unsigned char *p, int len)
 {
+#if 0
     int i;
     int j;
     for(i = 0; i < len;)
@@ -3263,6 +3259,7 @@ void hex_dump(int level, unsigned char *p, int len)
             LOG(level, (","));
         }
     }
+#endif
 }
 
 struct match_node {
@@ -4376,7 +4373,6 @@ const char *optimal_encoding_export(encode_match_data emd)
     static char buf[100];
     char *p = buf;
     encode_match_privp data;
-printf(".");
     data = emd->priv;
     offsets = (interval_nodep*)data->offset_f_priv;
     p += sprintf(p, "%s", export_helper((interval_nodep)data->len_f_priv, 16));

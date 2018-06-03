@@ -6,12 +6,16 @@
 # evolve without changing their URL (vasm for example)
 
 
-FROM ubuntu:17.10
+# 2018-01-21 Update forced
+
+FROM ubuntu:18.04
 MAINTAINER Romain Giot <giot.romain@gmail.com>
 
 ENV TERM xterm-256color
+RUN echo 'Etc/UTC' > /etc/timezone
+RUN ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -qy make tzdata
 
-RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -qy make
 
 # Prepare construction
 RUN mkdir /cpcsdk
@@ -23,6 +27,15 @@ RUN make -f /cpcsdk/dependencies.mk setup
 ADD data/Makefile /cpcsdk/Makefile
 RUN make install_all
 
+
+#Install rust
+RUN mkdir -p /home/rust
+ENV RUSTUP_HOME /home/rust
+ENV CARGO_HOME /home/rust
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH "/home/rust/bin:$PATH"
+RUN ls /home/rust
+RUN rustup completions bash > /etc/bash_completion.d/rustup.bash-completion
 
 # Compile rasm that is embeded in the data
 ADD data/rasm /tmp/rasm/

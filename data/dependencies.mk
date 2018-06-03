@@ -1,6 +1,6 @@
-VASM_URL?=http://server.owl.de/~frank/tags/vasm1_8a.tar.gz
+VASM_URL?=http://server.owl.de/~frank/tags/vasm1_8c.tar.gz
 VLINK_URL?=http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
-EXOMIZER_URL?=http://hem.bredband.net/magli143/exo/exomizer209.zip
+EXOMIZER_URL?=https://bitbucket.org/magli143/exomizer/wiki/downloads/exomizer-2.0.11.zip
 LIBDSK_URL=http://www.seasip.info/Unix/LibDsk/libdsk-1.4.0.tar.gz
 HFE_URL=svn://svn.code.sf.net/p/hxcfloppyemu/code/
 CPCTELERA_URL?=https://github.com/lronaldo/cpctelera/archive/v1.4.2.zip
@@ -147,12 +147,12 @@ install_libdsk:
 # The containter stuff does not work properly when host user has not id 1000.
 # The aim of this rule is to install a soft that fixes that
 install_user_managment:
-	gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
+	#gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
 	curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.10/gosu-$$(dpkg --print-architecture)" \
 	    && curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/1.10/gosu-$$(dpkg --print-architecture).asc" \
-	    && gpg --verify /usr/local/bin/gosu.asc \
-	    && rm /usr/local/bin/gosu.asc \
 	    && chmod +x /usr/local/bin/gosu
+	    #&& gpg --verify /usr/local/bin/gosu.asc \
+	    #&& rm /usr/local/bin/gosu.asc \
 
 
 .PHONY: setup

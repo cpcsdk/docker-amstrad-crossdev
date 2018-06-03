@@ -1,5 +1,6 @@
 # Installations scripts / Must be run as root
 
+# 2018-05-12: Add SugarConvDsk
 # 2017-11-05: Add Arkos Tracker
 # 2017-10-25: Add Grafx2
 # 2017-05-19: Rebuild because of vasm update / fix pycpcdemotools .
@@ -13,6 +14,7 @@ NPROCS=1
 install_all:
 	#$(MAKE) install_z80tonops # unique target when testing stuff
 	$(MAKE) -j $(NPROCS) \
+		install_sugarconvdsk \
 		install_chipnsfx \
 		install_grafx2 \
 		install_cpcxfs \
@@ -32,8 +34,17 @@ install_all:
 	#$(MAKE) install_winape
 
 
+install_sugarconvdsk:
+	cd $(SRC_DIR) && git clone https://github.com/Tom1975/SugarConvDsk.git
+	cd $(SRC_DIR)/Sugar*/SugarConvDsk && \
+		cmake . && \
+		make -j8 && \
+		ls && \
+		cp SugarConvDsk /usr/local/bin && \
+		rm -rf Sugar*
+
 install_chipnsfx:
-	cd $(SRC_DIR) && wget http://cngsoft.no-ip.org/chipnsfx-20171208.zip
+	cd $(SRC_DIR) && wget http://cngsoft.no-ip.org/chipnsfx-20180505.zip
 	cd $(SRC_DIR) && unzip chipnsfx-*.zip
 	mkdir -p /opt/chipnsfx
 	cd /opt/chipnsfx && unzip $(SRC_DIR)/chipnsfx*.zip
@@ -111,8 +122,8 @@ install_exomizer:
 		rm /tmp/exo.zip && \
 		cd exomizer/src && \
 		sed -i -e 's/-mtune=i686//' Makefile && \
-		make -j2 && \
-		cp exoraw exomizer $(INSTALLATION_BIN) && \
+		make -j2 && ls && \
+		cp exobasic exomizer $(INSTALLATION_BIN) && \
 		rm -rf ../../exomizer
 	touch $@
 
@@ -220,7 +231,7 @@ install_winape:
 
 install_at2:
 	mkdir -p /opt/ && cd /opt/ && \
-		wget "http://www.julien-nevo.com/arkostracker/release/linux/Arkos%20Tracker%202%20Linux.zip" && \
+		wget "http://www.julien-nevo.com/arkostracker/release/linux64/Arkos%20Tracker%202%20Linux64.zip" && \
 		unzip *.zip && rm *.zip
 
 
