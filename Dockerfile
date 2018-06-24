@@ -29,20 +29,18 @@ RUN make install_all
 
 
 #Install rust
-RUN mkdir -p /home/rust
-ENV RUSTUP_HOME /home/rust
-ENV CARGO_HOME /home/rust
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-ENV PATH "/home/rust/bin:$PATH"
-RUN ls /home/rust
+RUN mkdir -p /opt/rust
+ENV RUSTUP_HOME /opt/rust
+ENV CARGO_HOME /opt/rust
+RUN cd /opt/rust && curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH "/opt/rust/bin:$PATH"
 RUN rustup completions bash > /etc/bash_completion.d/rustup.bash-completion
 
 # Compile rasm that is embeded in the data
-ADD data/rasm /tmp/rasm/
-WORKDIR /tmp/rasm
-RUN gcc *.c -o /usr/local/bin/rasm -lm
+ADD data/rasm_*.zip /tmp
+WORKDIR /tmp
+RUN unzip rasm_*.zip && gcc *.c -O2 -lm -lrt -march=native -o /usr/local/bin/rasm -lm && rm -rf * && strip /usr/local/bin/rasm
 WORKDIR /cpcsdk
-RUN rm -rf /tmp/rasm
 
 # AFT version for the cpc booster
 ADD data/minibooster/aft /usr/local/bin/aft-minibooster
@@ -70,6 +68,6 @@ COPY data/entrypoint.sh /usr/local/bin/entrypoint.sh
 # Specify environement variales of interest
 ENV CPCT_PATH /usr/local/cpctelera/cpctelera-1.4.2/cpctelera
 ENV AKS_TRAKER2_PATH "/opt/Arkos Tracker 2"
-ENV PATH "/opt/Arkos Tracker 2:/opt/Arkos Tracker 2/tools:/opt/arnoldemu/:$CPCT_PATH/tools/scripts/:$PATH"
+ENV PATH "/opt/rust/bin/:/opt/Arkos Tracker 2:/opt/Arkos Tracker 2/tools:/opt/arnoldemu/:$CPCT_PATH/tools/scripts/:$PATH"
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
