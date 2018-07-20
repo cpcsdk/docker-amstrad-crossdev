@@ -1,5 +1,5 @@
 IMAGE?=cpcsdk/crossdev
-VERSION?=4.1.3
+VERSION?=4.1.6
 
 INSTALL_ROOT?=/usr/local
 
@@ -25,7 +25,6 @@ test:
 		./bootstrap.sh make distclean && \
 		./bootstrap.sh make ALL && \
 		./bootstrap.sh test
-
 
 open:
 	docker run -e DISPLAY=$(DISPLAY) \
