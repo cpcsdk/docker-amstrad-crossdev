@@ -1,3 +1,5 @@
+# XXX Raspian version is incomplete and only contians the minimal tools
+
 VASM_URL?=http://server.owl.de/~frank/tags/vasm1_8c.tar.gz
 VLINK_URL?=http://sun.hasenbraten.de/vlink/daily/vlink.tar.gz
 EXOMIZER_URL?=https://bitbucket.org/magli143/exomizer/wiki/downloads/exomizer-2.0.11.zip
@@ -41,7 +43,8 @@ GENERAL_DEPENDENCIES=\
 		sudo \
 		unzip \
 		wget \
-		wine64
+		libncurses5-dev libncursesw5-dev
+#		wine64 # XXX not added in raspbian container
 
 HXC_DEPENDENCIES=\
 		 libftdi1 \
@@ -96,30 +99,12 @@ ARNOLD_DEPENDENCIES=\
 	pasmo
 
 
-WINE_DEPENDENCIES=\
-		  xvfb wine64
-
 
 # install the set of dependencies
 install_dependencies:
-	DEBIAN_FRONTEND=noninteractive apt-get update && \
-			apt-get install -qq -y --no-upgrade software-properties-common && \
-			rm -rf /var/lib/apt/lists/* && apt-get clean && \
-			apt-get update && \
-			apt-get install  -qq -y --allow-unauthenticated --no-upgrade --show-progress \
+	DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install  -qq -y --allow-unauthenticated --no-upgrade --show-progress \
 				$(GENERAL_DEPENDENCIES) \
-				$(EDITOR_DEPENDENCIES) \
-				$(CPCTELERA_DEPENDENCIES) \
-				$(HXC_DEPENDENCIES) \
-				$(GIT_SVN_DEPENDENCIES) \
-				$(ARNOLD_DEPENDENCIES) \
-				$(CPCXFS_DEPENDENCIES) \
-				$(GRAFX2_DEPENDENCIES) \
-				$(WINE_DEPENDENCIES) && \
-				dpkg --add-architecture i386 && apt-get update && apt-get -qq -y install wine32 && \
-			apt-get purge -y software-properties-common && \
-			apt-get autoclean -y &&\
-			rm -rf /var/lib/apt/lists/* && \
+				$(GIT_SVN_DEPENDENCIES) 
 	touch $@
 
 

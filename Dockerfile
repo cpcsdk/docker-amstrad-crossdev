@@ -8,12 +8,14 @@
 
 # 2018-01-21 Update forced
 
-FROM ubuntu:18.04
+FROM resin/rpi-raspbian:stretch
 MAINTAINER Romain Giot <giot.romain@gmail.com>
+
+COPY qemu-arm-static /usr/bin
 
 ENV TERM xterm-256color
 RUN echo 'Etc/UTC' > /etc/timezone
-RUN ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
+RUN test -e /etc/localtime || ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
 RUN rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get update && apt-get install -qy make tzdata
 
 

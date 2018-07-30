@@ -14,22 +14,16 @@ NPROCS=1
 install_all:
 	#$(MAKE) install_z80tonops # unique target when testing stuff
 	$(MAKE) -j $(NPROCS) \
-		install_sugarconvdsk \
 		install_chipnsfx \
-		install_grafx2 \
 		install_cpcxfs \
 		install_exomizer \
 		install_cpcsdk \
-		install_cpctelera \
-		install_hfestuff \
 		install_pycpc \
 		install_vasm \
 		install_vlink \
-		install_arnold_and_deps \
 		install_cpcxfer \
 		install_at2 \
-		install_z80tonops \
-		install_winape
+		install_z80tonops
 	rm -rf $(SRC_DIR)
 	#$(MAKE) install_winape
 
@@ -73,7 +67,7 @@ install_grafx2:
 
 install_cpcxfer:
 	cd $(SRC_DIR) && git clone $(CPCXFER_URL) && cd cpcxfer && \
-	make && cp xfer /usr/local/bin && \
+	gcc *.c -o xfer -O2 && cp xfer /usr/local/bin && \
 	cp pyxfer.py /usr/local/bin && \
 	cd .. && rm -rf cpcxfer
 

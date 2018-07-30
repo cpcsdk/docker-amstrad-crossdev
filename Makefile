@@ -1,4 +1,4 @@
-IMAGE?=cpcsdk/crossdev
+IMAGE?=cpcsdk/minimal-crossdev-raspbian
 VERSION?=4.1.9
 
 INSTALL_ROOT?=/usr/local
