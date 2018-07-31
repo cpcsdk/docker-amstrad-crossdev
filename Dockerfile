@@ -8,10 +8,10 @@
 
 # 2018-01-21 Update forced
 
-FROM resin/rpi-raspbian:stretch
+FROM resin/rpi-raspbian
 MAINTAINER Romain Giot <giot.romain@gmail.com>
 
-COPY qemu-arm-static /usr/bin
+#COPY qemu-arm-static /usr/bin
 
 ENV TERM xterm-256color
 RUN echo 'Etc/UTC' > /etc/timezone
