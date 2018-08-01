@@ -8,7 +8,7 @@
 
 # 2018-01-21 Update forced
 
-FROM resin/rpi-raspbian
+FROM raspbian/stretch
 MAINTAINER Romain Giot <giot.romain@gmail.com>
 
 #COPY qemu-arm-static /usr/bin
