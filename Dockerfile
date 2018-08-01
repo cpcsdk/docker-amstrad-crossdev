@@ -39,9 +39,9 @@ ENV PATH "/opt/rust/bin:$PATH"
 RUN rustup completions bash > /etc/bash_completion.d/rustup.bash-completion
 
 # Compile rasm that is embeded in the data
-ADD data/rasm_*.zip /tmp
-WORKDIR /tmp
-RUN unzip rasm_*.zip && gcc *.c -O2 -lm -lrt -march=native -o /usr/local/bin/rasm -lm && rm -rf * && strip /usr/local/bin/rasm
+ADD data/rasm/ /tmp
+WORKDIR /tmp/rasm
+RUN gcc *.c -O2 -lm -lrt -march=native -o /usr/local/bin/rasm -lm && cd .. && rm -rf rasm && strip /usr/local/bin/rasm
 WORKDIR /cpcsdk
 
 # AFT version for the cpc booster
