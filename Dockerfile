@@ -39,26 +39,26 @@ ENV PATH "/opt/rust/bin:$PATH"
 RUN rustup completions bash > /etc/bash_completion.d/rustup.bash-completion
 
 # Compile rasm that is embeded in the data
-COPY data/rasm /tmp
-WORKDIR /tmp/rasm
-RUN gcc *.c -O2 -lm -lrt -march=native -o /usr/local/bin/rasm -lm && cd .. && rm -rf rasm && strip /usr/local/bin/rasm
-WORKDIR /cpcsdk
+#COPY data/rasm /tmp
+#WORKDIR /tmp/rasm
+#RUN gcc *.c -O2 -lm -lrt -march=native -o /usr/local/bin/rasm -lm && cd .. && rm -rf rasm && strip /usr/local/bin/rasm
+#WORKDIR /cpcsdk
 
 # AFT version for the cpc booster
-ADD data/minibooster/aft /usr/local/bin/aft-minibooster
-RUN chmod +x /usr/local/bin/aft-minibooster
+#ADD data/minibooster/aft /usr/local/bin/aft-minibooster
+#RUN chmod +x /usr/local/bin/aft-minibooster
 
 # Prepare the configuration files for Arnold user that is created on the fly when using container
 RUN mkdir -p /home/arnold
 
 # Install vim plugins
-RUN mkdir -p /home/arnold/.vim/autoload /home/arnold/.vim/bundle && \
-	cd /home/arnold/.vim/bundle && \
-	git clone --depth=1 https://github.com/majutsushi/tagbar && \
-	git clone --depth=1 https://github.com/xolox/vim-misc.git && \
-	git clone --depth=1 https://github.com/xolox/vim-easytags.git && \
-	git clone --depth=1 https://github.com/altercation/vim-colors-solarized.git && \
-	git clone --depth=1 https://github.com/cpcsdk/vim-z80-democoding.git
+#RUN mkdir -p /home/arnold/.vim/autoload /home/arnold/.vim/bundle && \
+#	cd /home/arnold/.vim/bundle && \
+#	git clone --depth=1 https://github.com/majutsushi/tagbar && \
+#	git clone --depth=1 https://github.com/xolox/vim-misc.git && \
+#	git clone --depth=1 https://github.com/xolox/vim-easytags.git && \
+#	git clone --depth=1 https://github.com/altercation/vim-colors-solarized.git && \
+#	git clone --depth=1 https://github.com/cpcsdk/vim-z80-democoding.git
 
 ADD data/bashrc /home/arnold/.bashrc
 ADD data/vimrc /home/arnold/.vimrc
