@@ -17,10 +17,12 @@ chown arnold $HOME -R
 
 sudo -u arnold git config --global merge.tool meld
 
+export PATH=$PATH:/usr/local/bin
+
 # Launch the command
 if test "$#" = "0"
 then
-exec /usr/local/bin/gosu arnold bash
+exec gosu arnold bash
 else
-exec /usr/local/bin/gosu arnold "$@"
+exec gosu arnold "$@"
 fi
