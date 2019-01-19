@@ -27,6 +27,11 @@ RUN make -f /cpcsdk/dependencies.mk setup
 ADD data/Makefile /cpcsdk/Makefile
 RUN make install_all
 
+# Compile rasm that is embeded in the data
+ADD data/rasm_*.zip /tmp
+WORKDIR /tmp
+RUN unzip rasm_*.zip && gcc *.c -O2 -lm -lrt -march=native -o /usr/local/bin/rasm -lm && rm -rf * && strip /usr/local/bin/rasm
+WORKDIR /cpcsdk
 
 #Install rust
 RUN mkdir -p /opt/rust
@@ -39,11 +44,7 @@ RUN rustup update
 RUN apt-get update && apt-get install -qy libssl-dev
 RUN cargo install --git=https://github.com/cpcsdk/rust.cpclib.git --all-features
 
-# Compile rasm that is embeded in the data
-ADD data/rasm_*.zip /tmp
-WORKDIR /tmp
-RUN unzip rasm_*.zip && gcc *.c -O2 -lm -lrt -march=native -o /usr/local/bin/rasm -lm && rm -rf * && strip /usr/local/bin/rasm
-WORKDIR /cpcsdk
+
 
 # AFT version for the cpc booster
 ADD data/minibooster/aft /usr/local/bin/aft-minibooster
