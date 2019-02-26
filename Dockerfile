@@ -43,7 +43,8 @@ RUN cd /opt/rust && curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolc
 ENV PATH "/opt/rust/bin:$PATH"
 RUN rustup completions bash > /etc/bash_completion.d/rustup.bash-completion
 RUN rustup update
-RUN apt-get update && apt-get install -qy libssl-dev
+RUN apt-get update && apt-get install -qy libssl-dev pkgconf
+RUN pkg-config --libs --cflags openssl
 RUN cargo install --git=https://github.com/cpcsdk/rust.cpclib.git --all-features
 
 # AFT version for the cpc booster

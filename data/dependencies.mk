@@ -37,6 +37,7 @@ GENERAL_DEPENDENCIES=\
 		curl \
 		gosu \
 		make \
+		libssl-dev \
 		python \
 		python3-pil \
 		python-matplotlib \
