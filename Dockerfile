@@ -37,12 +37,12 @@ WORKDIR /cpcsdk
 RUN mkdir -p /opt/rust
 ENV RUSTUP_HOME /opt/rust
 ENV CARGO_HOME /opt/rust
-RUN cd /opt/rust && curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=nightly 
+RUN cd /opt/rust && curl https://sh.rustup.rs -sSf  | sh -s -- -y --default-toolchain=nightly
 ENV PATH "/opt/rust/bin:$PATH"
 RUN rustup completions bash > /etc/bash_completion.d/rustup.bash-completion
 RUN rustup update
 RUN apt-get update && apt-get install -qy libssl-dev
-RUN cargo install --git=https://github.com/cpcsdk/rust.cpclib.git --all-features
+RUN cargo install --git=https://github.com/cpcsdk/rust.cpclib.git --all-features # update to  0.2.12-beta
 
 
 
