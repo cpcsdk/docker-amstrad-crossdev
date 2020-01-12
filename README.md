@@ -26,6 +26,16 @@ $ docker build -t cpcsdk/crossdev .
 
 Please note that there is a specific branch when using the image on a raspberrypi (`raspbian-stretch`).
 
+## Windows 10 + wsl 2
+
+Using windows 10 and wsl 2 it is possible to better integrate everything.
+Follow the procedure to install wsl 2 and docker.
+Pay attention to configure git in order to work with Linux line ending both on windows and linux. Otherwise nothing will work and error messages will not be enough informative to understand this is for this reason.
+```bash
+git config --global core.autocrlf input
+git config --global core.eol lf
+```
+
 ## Windows
 
 The aim of Docker is to manipulate Linux containers. It is of course totally incompatible with Windows world !
