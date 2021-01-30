@@ -42,7 +42,8 @@ ENV PATH "/opt/rust/bin:$PATH"
 RUN rustup completions bash > /etc/bash_completion.d/rustup.bash-completion
 RUN rustup update
 RUN apt-get update && apt-get install -qy libssl-dev
-RUN cargo install --git=https://github.com/cpcsdk/rust.cpclib.git --all-features # update to  0.2.12-beta
+RUN cargo install cpclib --all-features --bins
+
 
 
 
