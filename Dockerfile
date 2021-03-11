@@ -28,9 +28,9 @@ ADD data/Makefile /cpcsdk/Makefile
 RUN make install_all
 
 # Compile rasm that is embeded in the data
-ADD data/rasm_*.zip /tmp
+ADD data/rasm*.zip /tmp
 WORKDIR /tmp
-RUN unzip rasm_*.zip && gcc *.c -O2 -lm -lrt -march=native -o /usr/local/bin/rasm -lm && rm -rf * && strip /usr/local/bin/rasm
+RUN unzip rasm*.zip && cd rasm* && pwd && make -f makefile prod && cp rasm.exe /usr/local/bin/rasm 
 WORKDIR /cpcsdk
 
 #Install rust
@@ -43,6 +43,7 @@ RUN rustup completions bash > /etc/bash_completion.d/rustup.bash-completion
 RUN rustup update
 RUN apt-get update && apt-get install -qy libssl-dev
 RUN cargo install cpclib --all-features --bins
+RUN cargo install cpclib-disc --all-features --bins
 
 
 
