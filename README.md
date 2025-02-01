@@ -1,3 +1,7 @@
+There is no need anymore to use this Docker fil.
+<https://github.com/cpcsdk/rust.cpclib> is a better fit
+
+
 
 # docker-amstrad-crossdev
 Docker file to install various tools needed for Amstrad CPC crossdev
